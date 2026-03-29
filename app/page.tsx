@@ -429,7 +429,7 @@ export default function LandingPage() {
                 </div>
 
                 <div className="flex flex-wrap gap-4 pt-4">
-                  <a href={process.env.NEXT_PUBLIC_NOTES_URL || 'http://localhost:3001'} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-[#0d9488] hover:bg-[#14b8a6] rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all shadow-lg shadow-teal-500/20 flex items-center gap-2">
+                  <a href="/notes" className="px-8 py-4 bg-[#0d9488] hover:bg-[#14b8a6] rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all shadow-lg shadow-teal-500/20 flex items-center gap-2">
                     <span>Try Live Demo</span>
                     <ExternalLink size={14} />
                   </a>

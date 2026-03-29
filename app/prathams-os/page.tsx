@@ -122,7 +122,7 @@ export default function Dashboard() {
                 }
             }} />;
             
-            if (app.component === 'notes') component = <iframe src={`${process.env.NEXT_PUBLIC_NOTES_URL || 'http://localhost:3001'}?window=true`} className="w-full h-full border-none bg-transparent" />;
+            if (app.component === 'notes') component = <iframe src="/notes?window=true" className="w-full h-full border-none bg-transparent" />;
             if (app.component === 'type') component = <iframe src="/type?window=true" className="w-full h-full border-none bg-transparent" />;
             if (app.component === 'about') component = <AboutApp />;
             if (app.component === 'settings') component = <SettingsApp />;
