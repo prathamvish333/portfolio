@@ -51,10 +51,10 @@ export default function SystemDashboard() {
   ), []);
 
   return (
-    <div className="relative w-full max-w-6xl mx-auto py-12 md:py-20 px-4 md:px-6 overflow-hidden border border-white/5 bg-[#020617]/40 backdrop-blur-xl rounded-[2.5rem] group transition-all duration-700 shadow-2xl">
+    <div className="relative w-full max-w-6xl mx-auto py-12 md:py-20 px-4 md:px-6 overflow-hidden dashboard-wrapper transform-3d" style={{ transform: 'translateZ(20px)' }}>
       {/* Cinematic Styling Layers */}
       <div className="scanline opacity-50" />
-      <div className="absolute inset-0 bg-radial-at-t from-teal-500/5 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-radial from-teal-500/5 to-transparent pointer-events-none" />
       
       {/* Perspective/Technical Anchors */}
       <div className="absolute top-8 left-8 flex flex-col gap-2 z-30 opacity-60">

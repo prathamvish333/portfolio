@@ -23,7 +23,7 @@ export default function ServiceHealth({ services }: ServiceHealthProps) {
         {services.map((service) => (
           <div key={service.name} className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className={`w-2 h-2 rounded-full ${service.status === 'online' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-amber-500'}`} />
+              <div className={`w-2 h-2 rounded-full ${service.status === 'online' ? 'bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]' : 'bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.8)]'}`} />
               <span className="font-mono text-[10px] text-gray-300 uppercase tracking-wider">{service.name}</span>
             </div>
             <div className="flex items-center gap-4">

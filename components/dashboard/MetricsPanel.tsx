@@ -31,9 +31,10 @@ export default function MetricsPanel({ metrics }: MetricsPanelProps) {
           <div key={metric.label} className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 flex flex-col justify-between">
             <span className="font-mono text-[9px] text-gray-500 uppercase tracking-widest mb-1">{metric.label}</span>
             <motion.span 
-              initial={false}
-              animate={{ opacity: [0.5, 1], scale: [0.98, 1] }}
-              transition={{ duration: 0.3 }}
+              key={metric.value}
+              initial={{ opacity: 0.5, scale: 0.95, textShadow: "0 0 20px rgba(45, 212, 191, 0.8)" }}
+              animate={{ opacity: 1, scale: 1, textShadow: "0 0 0px rgba(45, 212, 191, 0)" }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
               className={`font-heading text-xl md:text-2xl font-black ${metric.color} tracking-tight`}
             >
               {metric.value}

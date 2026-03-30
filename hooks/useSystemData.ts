@@ -61,8 +61,16 @@ export function useSystemData() {
       latency: Math.max(80, Math.min(250, prev.latency + (Math.random() * 20 - 10))),
       requestsPerSecond: Math.max(30, Math.min(100, prev.requestsPerSecond + (Math.random() * 10 - 5))),
       errorRate: Math.max(0.01, Math.min(0.05, prev.errorRate + (Math.random() * 0.01 - 0.005))),
-      uptime: '99.99%',
+      uptime: '99.9%',
     }));
+  }, []);
+
+  // Stable services latency update
+  const updateServices = useCallback(() => {
+    setServices(prev => prev.map(s => ({
+      ...s,
+      latency: Math.max(5, Math.floor(s.latency + (Math.random() * 8 - 4)))
+    })));
   }, []);
 
   // Stable log addition
@@ -97,13 +105,15 @@ export function useSystemData() {
     setLogs(initialLogs);
 
     const metricsInterval = setInterval(updateMetrics, 4000);
+    const servicesInterval = setInterval(updateServices, 2500);
     const logsInterval = setInterval(addLog, 2500);
 
     return () => {
       clearInterval(metricsInterval);
+      clearInterval(servicesInterval);
       clearInterval(logsInterval);
     };
-  }, [updateMetrics, addLog]);
+  }, [updateMetrics, updateServices, addLog]);
 
   return useMemo(() => ({
     metrics,

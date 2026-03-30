@@ -70,8 +70,8 @@ export default function StarfieldBackground() {
         <Stars />
       </motion.div>
       {/* Deep space fog for depth */}
-      <div className="absolute inset-0 bg-gradient-to-b from-teal-950/5 via-transparent to-[#020617]" />
-      <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#020617] to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#05070d] via-transparent to-[#081021]/80" />
+      <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#05070d] to-transparent" />
     </div>
   );
 }

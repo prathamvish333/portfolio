@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { LogEntry } from '@/hooks/useSystemData';
 
 interface LogStreamProps {
@@ -12,7 +13,10 @@ export default function LogStream({ logs }: LogStreamProps) {
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
     }
   }, [logs]);
 
@@ -34,21 +38,30 @@ export default function LogStream({ logs }: LogStreamProps) {
         ref={scrollRef}
         className="flex-1 overflow-y-auto scrollbar-hide space-y-2.5 font-mono text-[10px] md:text-[11px] font-bold tracking-tight"
       >
-        {logs.map((log) => (
-          <div key={log.id} className="flex gap-4 group/log">
-            <span className="text-gray-600 shrink-0 font-light">[{log.timestamp}]</span>
-            <span className={`uppercase shrink-0 w-12 ${
-              log.level === 'error' ? 'text-rose-500' :
-              log.level === 'warn' ? 'text-amber-400' :
-              log.level === 'success' ? 'text-emerald-500' :
-              'text-blue-400'
-            }`}>
-              {log.level}
-            </span>
-            <span className={`uppercase shrink-0 text-gray-500`}>[{log.type}]</span>
-            <span className="text-gray-300 group-hover/log:text-white transition-colors">{log.message}</span>
-          </div>
-        ))}
+        <AnimatePresence initial={false}>
+          {logs.map((log) => (
+            <motion.div 
+              key={log.id} 
+              className="flex gap-4 group/log"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+            >
+              <span className="text-gray-600 shrink-0 font-light">[{log.timestamp}]</span>
+              <span className={`uppercase shrink-0 w-12 ${
+                log.level === 'error' ? 'text-rose-500' :
+                log.level === 'warn' ? 'text-amber-400' :
+                log.level === 'success' ? 'text-emerald-500' :
+                'text-blue-400'
+              }`}>
+                {log.level}
+              </span>
+              <span className={`uppercase shrink-0 text-gray-500`}>[{log.type}]</span>
+              <span className="text-gray-300 group-hover/log:text-white transition-colors">{log.message}</span>
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
 
       <div className="absolute bottom-6 right-6 opacity-40 group-hover:opacity-100 transition-opacity">

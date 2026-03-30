@@ -65,11 +65,11 @@ export default function PipelineViz() {
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute -top-24 left-1/2 -translate-x-1/2 w-48 p-4 bg-[#0b1120] border border-teal-500/30 rounded-xl shadow-2xl z-50 pointer-events-none"
+                  className="absolute -top-24 left-1/2 -translate-x-1/2 w-48 p-4 bg-[#05070d] border border-teal-500/30 rounded-xl shadow-2xl z-50 pointer-events-none"
                 >
                   <p className="font-heading text-[10px] font-black text-teal-400 uppercase tracking-widest mb-1">{stage.label} Layer</p>
                   <p className="text-[10px] text-gray-400 leading-relaxed font-bold uppercase">{stage.desc}</p>
-                  <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-3 h-3 bg-[#0b1120] border-b border-r border-teal-500/30 rotate-45" />
+                  <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-3 h-3 bg-[#05070d] border-b border-r border-teal-500/30 rotate-45" />
                 </motion.div>
               )}
             </AnimatePresence>

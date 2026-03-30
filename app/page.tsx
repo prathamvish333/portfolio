@@ -204,8 +204,8 @@ function TiltCard({ children, isRecruiterMode = false }: { children: React.React
     const y = e.clientY - rect.top;
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -5;
-    const rotateY = ((x - centerX) / centerX) * 5;
+    const rotateX = ((y - centerY) / centerY) * -6;
+    const rotateY = ((x - centerX) / centerX) * 6;
     setRotate({ x: rotateX, y: rotateY });
   };
 
@@ -220,7 +220,7 @@ function TiltCard({ children, isRecruiterMode = false }: { children: React.React
       style={{ transformStyle: 'preserve-3d' }}
       className="h-full"
     >
-      <div style={{ transform: 'translateZ(20px)' }}>
+      <div className="transform-3d" style={{ transform: 'translateZ(20px)' }}>
         {children}
       </div>
     </motion.div>
@@ -274,7 +274,7 @@ export default function LandingPage() {
       {!isRecruiterMode && <StarfieldBackground />}
       
       {/* Hero Section */}
-      <section id="hero" ref={heroRef} className="relative min-h-screen flex items-center px-6 md:px-20 lg:px-32 bg-[#0b1120] grid-bg overflow-hidden pt-24 md:pt-20">
+      <section id="hero" ref={heroRef} className={`relative min-h-screen flex items-center px-6 md:px-20 lg:px-32 ${isRecruiterMode ? 'bg-[#0b1120]' : 'bg-transparent'} grid-bg overflow-hidden pt-24 md:pt-20 perspective-container`}>
         {!isRecruiterMode && (
           <PerspectiveWrapper>
             <motion.div 
@@ -292,10 +292,15 @@ export default function LandingPage() {
         )}
 
         <motion.div
-          className="relative z-10 flex flex-col"
-          style={{ opacity: heroOpacity }}
+          className="relative z-10 flex flex-col transform-3d w-full"
+          style={{ 
+            opacity: heroOpacity,
+            transform: !isRecruiterMode ? 'translateZ(25px)' : 'none'
+          }}
         >
           <motion.div
+            className="transform-3d"
+            style={{ transform: !isRecruiterMode ? 'translateZ(50px)' : 'none' }}
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
@@ -348,10 +353,11 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="mt-12 flex flex-col sm:flex-row items-stretch sm:items-center gap-4"
+            className="mt-12 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 transform-3d"
+            style={{ transform: !isRecruiterMode ? 'translateZ(40px)' : 'none' }}
           >
             {!isRecruiterMode && (
-              <Link href="/prathams-os" className="px-6 py-4 bg-[#0d9488] text-white hover:bg-[#14b8a6] rounded-2xl font-heading text-[10px] font-black tracking-widest uppercase transition-all shadow-lg flex items-center justify-center gap-3">
+              <Link href="/prathams-os" className="px-6 py-4 bg-[#0d9488] text-white hover:bg-[#14b8a6] rounded-2xl font-heading text-[10px] font-black tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(13,148,136,0.5)] hover:shadow-[0_0_40px_rgba(13,148,136,0.8)] flex items-center justify-center gap-3 glow-on-hover hover:scale-105">
                 <span>Launch OS</span>
                 <ExternalLink size={14} />
               </Link>
@@ -365,7 +371,7 @@ export default function LandingPage() {
                 ${isRecruiterMode ? 'bg-teal-500/10 border-teal-500/50 text-teal-400 shadow-lg' : 'border-white/10 hover:border-teal-500/50 bg-white/[0.02] hover:bg-teal-500/5 text-[#9ca3af] hover:text-[#e5e7eb]'}`}>
                 Experience
               </a>
-              <a href="#projects" className="px-6 md:px-8 py-4 md:py-5 border border-white/10 hover:border-teal-500/30 bg-white/[0.02] rounded-2xl font-heading text-[10px] md:text-xs font-bold tracking-widest uppercase transition-all text-[#9ca3af] hover:text-[#e5e7eb]">
+              <a href="#projects" className="px-6 md:px-8 py-4 md:py-5 border border-white/10 hover:border-teal-500/30 bg-white/[0.02] rounded-2xl font-heading text-[10px] md:text-xs font-bold tracking-widest uppercase transition-all text-[#9ca3af] hover:text-[#e5e7eb] hover:scale-105 glow-on-hover">
                 Projects
               </a>
             </div>

@@ -10,7 +10,7 @@ body {
 
 @layer base {
   body {
-    @apply bg-[#0b1120] text-[#e5e7eb] antialiased selection:bg-teal-500/30 font-sans;
+    @apply bg-[#05070d] text-[#e5e7eb] antialiased selection:bg-teal-500/30 font-sans;
     overflow-x: hidden;
   }
 }
@@ -110,11 +110,24 @@ body {
 
   /* === SURFACE & DEPTH === */
   .surface-card {
-    @apply rounded-[2.5rem] border border-white/[0.08] bg-[#1e293b] shadow-[0_40px_120px_rgba(0,0,0,0.7)] backdrop-blur-sm transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)];
+    @apply rounded-[2.5rem] border border-white/[0.08] bg-[#1e293b] backdrop-blur-sm transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)];
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
   }
 
   .surface-card:hover {
-    @apply border-teal-500/40 shadow-[0_60px_150px_rgba(0,0,0,0.9)] scale-[1.01] -translate-y-2;
+    @apply border-teal-500/40 -translate-y-[6px] scale-[1.02];
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+  }
+
+  /* Dashboard specific 3D wrapper */
+  .dashboard-wrapper {
+    @apply relative w-full border border-white/5 bg-[#020617]/40 backdrop-blur-xl rounded-[2.5rem] group transition-all duration-700;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  }
+  
+  .dashboard-wrapper:hover {
+    @apply border-teal-500/20;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.65);
   }
 
   .glass-blur {
@@ -156,6 +169,13 @@ body {
 
   .glass-card {
     @apply backdrop-blur-xl bg-white/[0.03] border border-white/10 shadow-2xl;
+  }
+
+  .glass-panel {
+    @apply backdrop-blur-xl bg-white/5 border border-white/10 transition-all duration-500;
+  }
+  .glass-panel:hover {
+    box-shadow: 0 0 25px rgba(13, 148, 136, 0.15);
   }
 
   .hover-tilt {
@@ -260,11 +280,19 @@ body {
   }
 
   .cinematic-glow {
-    text-shadow: 0 0 20px rgba(45, 212, 191, 0.3), 0 0 40px rgba(45, 212, 191, 0.1);
+    text-shadow: 0 0 20px rgba(45, 212, 191, 0.4), 0 0 50px rgba(45, 212, 191, 0.2);
   }
 
   .hero-tracking {
     @apply tracking-[-0.08em];
     word-spacing: -0.1em;
+  }
+  
+  .glow-on-hover {
+    @apply transition-all duration-300;
+  }
+  
+  .glow-on-hover:hover {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.15), 0 0 30px rgba(13, 148, 136, 0.2);
   }
 }
