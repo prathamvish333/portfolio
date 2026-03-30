@@ -1,11 +1,14 @@
 'use client';
 
-import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView, useMotionValue, useSpring } from 'framer-motion';
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import InfraStatus from '@/components/InfraStatus';
 import SystemStatus from '@/components/SystemStatus';
+import PerspectiveWrapper from '@/components/PerspectiveWrapper';
+import SystemDashboard from '@/components/SystemDashboard';
+import StarfieldBackground from '@/components/StarfieldBackground';
 import { useOS } from '../context/OSContext';
 import { Github, Linkedin, FileText, ExternalLink, Mail } from 'lucide-react';
 
@@ -182,6 +185,49 @@ const skillCategories = [
 ];
 
 /* ─────────────────────────────────────────────
+   HOVER TILT COMPONENT
+   ───────────────────────────────────────────── */
+function TiltCard({ children, isRecruiterMode = false }: { children: React.ReactNode, isRecruiterMode?: boolean }) {
+  const [rotate, setRotate] = useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
+  if (isRecruiterMode || isMobile) return <>{children}</>;
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -5;
+    const rotateY = ((x - centerX) / centerX) * 5;
+    setRotate({ x: rotateX, y: rotateY });
+  };
+
+  const handleMouseLeave = () => setRotate({ x: 0, y: 0 });
+
+  return (
+    <motion.div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      animate={{ rotateX: rotate.x, rotateY: rotate.y }}
+      transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+      style={{ transformStyle: 'preserve-3d' }}
+      className="h-full"
+    >
+      <div style={{ transform: 'translateZ(20px)' }}>
+        {children}
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────────────────
    MAIN LANDING PAGE
    ───────────────────────────────────────────── */
 export default function LandingPage() {
@@ -189,6 +235,21 @@ export default function LandingPage() {
   const [isMounted, setIsMounted] = useState(false);
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll();
+
+  // Mouse Parallax Logic
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
+  const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
+  const bgX = useTransform(springX, [-0.5, 0.5], ['-5px', '5px']);
+  const bgYParallax = useTransform(springY, [-0.5, 0.5], ['-5px', '5px']);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isRecruiterMode) return;
+    const { innerWidth, innerHeight } = window;
+    mouseX.set((e.clientX / innerWidth) - 0.5);
+    mouseY.set((e.clientY / innerHeight) - 0.5);
+  };
 
   // Parallax transforms for hero background
   const bgY = useTransform(scrollYProgress, [0, 0.3], ['0%', '30%']);
@@ -205,20 +266,29 @@ export default function LandingPage() {
   if (!isMounted) return <div className="min-h-screen bg-[#0b1120]" />;
 
   return (
-    <main className={`relative bg-[#0b1120] text-[#e5e7eb] selection:bg-teal-500 selection:text-white overflow-x-hidden ${isRecruiterMode ? 'recruiter-view' : ''}`}>
+    <main 
+      onMouseMove={handleMouseMove}
+      className={`relative bg-[#0b1120] text-[#e5e7eb] selection:bg-teal-500 selection:text-white overflow-x-hidden ${isRecruiterMode ? 'recruiter-view' : ''}`}
+    >
       <Navbar />
+      {!isRecruiterMode && <StarfieldBackground />}
       
       {/* Hero Section */}
       <section id="hero" ref={heroRef} className="relative min-h-screen flex items-center px-6 md:px-20 lg:px-32 bg-[#0b1120] grid-bg overflow-hidden pt-24 md:pt-20">
         {!isRecruiterMode && (
-          <motion.div className="absolute inset-0 z-0" style={{ y: bgY, scale: bgScale }}>
-            <div className="absolute inset-0 bg-gradient-to-b from-teal-900/10 via-[#0b1120]/90 to-[#0b1120] z-10" />
-            <img
-              src="/hero_arch.png"
-              alt=""
-              className="w-full h-full object-cover opacity-10 grayscale"
-            />
-          </motion.div>
+          <PerspectiveWrapper>
+            <motion.div 
+              className="absolute inset-0 z-0" 
+              style={{ y: bgY, scale: bgScale, x: bgX, translateY: bgYParallax }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-b from-teal-950/20 via-[#0b1120]/80 to-[#0b1120] z-10" />
+              <img
+                src="/hero_arch.png"
+                alt=""
+                className="w-full h-full object-cover opacity-5 grayscale"
+              />
+            </motion.div>
+          </PerspectiveWrapper>
         )}
 
         <motion.div
@@ -230,7 +300,7 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
           >
-            <h1 className="font-heading text-4xl sm:text-5xl md:text-8xl lg:text-9xl font-black text-[#e5e7eb] leading-[0.9] md:leading-[0.85] tracking-tighter uppercase">
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-8xl lg:text-9xl font-black text-[#e5e7eb] leading-[0.9] md:leading-[0.85] uppercase hero-tracking cinematic-glow">
               Pratham<br />
               <span className="text-[#0d9488]">Vishwakarma</span>
             </h1>
@@ -402,57 +472,70 @@ export default function LandingPage() {
           </header>
 
           {/* Project 1: Notes Studio */}
-          <div className="surface-card p-8 md:p-12 mb-20 lg:p-16">
-            <div className="grid lg:grid-cols-2 gap-16 items-start">
-              <div className="space-y-10">
+          <TiltCard isRecruiterMode={isRecruiterMode}>
+            <div className="surface-card p-8 md:p-12 mb-20 lg:p-16">
+              <div className="grid lg:grid-cols-2 gap-16 items-start">
+                <div className="space-y-10">
+                  <div>
+                    <div className="flex items-center gap-4 mb-4">
+                      <span className="px-3 py-1 rounded-md bg-teal-500/10 border border-teal-500/20 font-mono text-[10px] text-teal-400 font-bold uppercase tracking-widest">Production-Ready</span>
+                      <span className="px-3 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 font-mono text-[10px] text-blue-400 font-bold uppercase tracking-widest">Full-Stack</span>
+                    </div>
+                    <h3 className="font-heading text-4xl md:text-6xl font-black text-[#e5e7eb] leading-tight mb-6">Notes Studio<span className="text-teal-500">.</span></h3>
+                    
+                    <div className="space-y-8">
+                      <div>
+                        <h4 className="font-heading text-[10px] font-black text-teal-500 uppercase tracking-[0.3em] mb-2">Problem Solved</h4>
+                        <p className="text-[#9ca3af] leading-relaxed text-sm md:text-base">
+                          Scaling specialized engineering tools requires more than just code; it needs a resilient, automated foundation. I solved the challenge of fragmented deployment and manual infra scaling which hindered development speed and system reliability.
+                        </p>
+                      </div>
+                      <div>
+                        <h4 className="font-heading text-[10px] font-black text-teal-500 uppercase tracking-[0.3em] mb-2">Technical Solution</h4>
+                        <p className="text-[#9ca3af] leading-relaxed text-sm md:text-base">
+                          Engineered a cloud-native architecture using a containerized 3-tier stack. Orchestrated with Kubernetes for automated healing and scaling, integrated Jenkins for end-to-end CI/CD, and deployed a full observability suite (Prometheus & Grafana) for precision telemetry.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-4 pt-4">
+                    <a href="/notes" className="px-8 py-4 bg-[#0d9488] hover:bg-[#14b8a6] rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all shadow-lg shadow-teal-500/20 flex items-center gap-2">
+                      <span>Try Live Demo</span>
+                      <ExternalLink size={14} />
+                    </a>
+                    <a href="https://github.com/prathamvish333/Notes-Studio" target="_blank" className="px-8 py-4 border border-white/10 hover:border-teal-500/30 rounded-xl font-heading text-xs font-bold tracking-widest uppercase transition-all text-[#9ca3af] hover:text-[#e5e7eb]">
+                      GitHub Repo
+                    </a>
+                  </div>
+                </div>
+                <div className="space-y-6">
+                  <h4 className="font-heading text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] text-center mb-4">Architecture Specification</h4>
+                  <ArchitectureDiagram isRecruiterMode={isRecruiterMode} />
+                </div>
+              </div>
+            </div>
+          </TiltCard>
+
+          {/* System Dashboard Section (Replaces System Telemetry) */}
+          {!isRecruiterMode ? (
+            <PerspectiveWrapper>
+              <div id="system-dashboard" className="section-container !bg-transparent !p-0 !border-none">
+                <SystemDashboard />
+              </div>
+            </PerspectiveWrapper>
+          ) : (
+            <>
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                 <div>
-                  <div className="flex items-center gap-4 mb-4">
-                    <span className="px-3 py-1 rounded-md bg-teal-500/10 border border-teal-500/20 font-mono text-[10px] text-teal-400 font-bold uppercase tracking-widest">Production-Ready</span>
-                    <span className="px-3 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 font-mono text-[10px] text-blue-400 font-bold uppercase tracking-widest">Full-Stack</span>
-                  </div>
-                  <h3 className="font-heading text-4xl md:text-6xl font-black text-[#e5e7eb] leading-tight mb-6">Notes Studio<span className="text-teal-500">.</span></h3>
-                  
-                  <div className="space-y-8">
-                    <div>
-                      <h4 className="font-heading text-[10px] font-black text-teal-500 uppercase tracking-[0.3em] mb-2">Problem Solved</h4>
-                      <p className="text-[#9ca3af] leading-relaxed text-sm md:text-base">
-                        Scaling specialized engineering tools requires more than just code; it needs a resilient, automated foundation. I solved the challenge of fragmented deployment and manual infra scaling which hindered development speed and system reliability.
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="font-heading text-[10px] font-black text-teal-500 uppercase tracking-[0.3em] mb-2">Technical Solution</h4>
-                      <p className="text-[#9ca3af] leading-relaxed text-sm md:text-base">
-                        Engineered a cloud-native architecture using a containerized 3-tier stack. Orchestrated with Kubernetes for automated healing and scaling, integrated Jenkins for end-to-end CI/CD, and deployed a full observability suite (Prometheus & Grafana) for precision telemetry.
-                      </p>
-                    </div>
-                  </div>
+                  <p className="section-subtitle">Real-time stats</p>
+                  <h3 className="font-heading text-2xl md:text-4xl font-black text-[#e5e7eb] uppercase tracking-tight">System Telemetry</h3>
                 </div>
-
-                <div className="flex flex-wrap gap-4 pt-4">
-                  <a href="/notes" className="px-8 py-4 bg-[#0d9488] hover:bg-[#14b8a6] rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all shadow-lg shadow-teal-500/20 flex items-center gap-2">
-                    <span>Try Live Demo</span>
-                    <ExternalLink size={14} />
-                  </a>
-                  <a href="https://github.com/prathamvish333/Notes-Studio" target="_blank" className="px-8 py-4 border border-white/10 hover:border-teal-500/30 rounded-xl font-heading text-xs font-bold tracking-widest uppercase transition-all text-[#9ca3af] hover:text-[#e5e7eb]">
-                    GitHub Repo
-                  </a>
-                </div>
+                <p className="text-[10px] text-gray-500 font-heading tracking-[0.3em] uppercase font-bold pr-4">Active Pods: 03</p>
               </div>
-              <div className="space-y-6">
-                 <h4 className="font-heading text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] text-center mb-4">Architecture Specification</h4>
-                 <ArchitectureDiagram isRecruiterMode={isRecruiterMode} />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-            <div>
-              <p className="section-subtitle">Real-time stats</p>
-              <h3 className="font-heading text-2xl md:text-4xl font-black text-[#e5e7eb] uppercase tracking-tight">System Telemetry</h3>
-            </div>
-            <p className="text-[10px] text-gray-500 font-heading tracking-[0.3em] uppercase font-bold pr-4">Active Pods: 03</p>
-          </div>
-          <InfraStatus />
+              <InfraStatus />
+            </>
+          )}
         </div>
       </section>
 

@@ -143,6 +143,39 @@ body {
       @apply min-h-[50vh] py-12;
     }
   }
+
+  /* === 3D & GLASS UI SYSTEM === */
+  .perspective-container {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+  }
+
+  .transform-3d {
+    transform-style: preserve-3d;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-xl bg-white/[0.03] border border-white/10 shadow-2xl;
+  }
+
+  .hover-tilt {
+    @apply transition-transform duration-500 ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hover-tilt, .perspective-container, .transform-3d {
+      perspective: none !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .perspective-container, .transform-3d, .hover-tilt {
+      perspective: none !important;
+      transform: none !important;
+    }
+  }
 }
 
 .font-heading {
@@ -196,5 +229,42 @@ body {
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  /* === INTERSTELLAR AESTHETIC === */
+  .star-field {
+    @apply fixed inset-0 pointer-events-none z-[-2] overflow-hidden bg-[#020617];
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  .instrument-border {
+    @apply absolute pointer-events-none opacity-40;
+  }
+
+  .coordinate-tag {
+    @apply font-mono text-[8px] text-teal-500/40 tracking-[0.2em] uppercase whitespace-nowrap select-none;
+  }
+
+  .scanline {
+    @apply absolute inset-0 pointer-events-none z-20 overflow-hidden;
+    background: linear-gradient(
+      to bottom,
+      transparent 50%,
+      rgba(45, 212, 191, 0.03) 50%
+    );
+    background-size: 100% 4px;
+  }
+
+  .cinematic-glow {
+    text-shadow: 0 0 20px rgba(45, 212, 191, 0.3), 0 0 40px rgba(45, 212, 191, 0.1);
+  }
+
+  .hero-tracking {
+    @apply tracking-[-0.08em];
+    word-spacing: -0.1em;
   }
 }
