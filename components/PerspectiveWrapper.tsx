@@ -38,7 +38,10 @@ export default function PerspectiveWrapper({ children }: PerspectiveWrapperProps
 
   return (
     <div className="perspective-container w-full h-full transform-3d pointer-events-none">
-       <div className="w-full h-full pointer-events-auto">
+       <div 
+         className="w-full h-full pointer-events-auto transform-3d transition-transform duration-700 ease-out" 
+         style={{ transform: 'translateZ(30px)' }}
+       >
           {children}
        </div>
     </div>

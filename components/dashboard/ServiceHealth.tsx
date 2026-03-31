@@ -9,34 +9,35 @@ interface ServiceHealthProps {
 
 export default function ServiceHealth({ services }: ServiceHealthProps) {
   return (
-    <div className="glass-card rounded-3xl p-6 h-full flex flex-col justify-between">
+    <div className="dashboard-wrapper p-6 h-full flex flex-col justify-between scanline-overlay">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="font-heading text-sm font-black text-gray-400 tracking-widest uppercase">Service Health</h3>
+        <h3 className="font-space text-[10px] font-black text-[#fbbf24] tracking-[0.2em] uppercase">System_Service_Health</h3>
         <div className="flex gap-1.5">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/40" />
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/20" />
+          <div className="w-1.5 h-1.5 rounded-full bg-[#fbbf24] animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.6)]" />
+          <div className="w-1.5 h-1.5 rounded-full bg-[#fbbf24]/20" />
         </div>
       </div>
 
       <div className="space-y-4">
         {services.map((service) => (
-          <div key={service.name} className="flex items-center justify-between">
+          <div key={service.name} className="flex items-center justify-between group">
             <div className="flex items-center gap-3">
-              <div className={`w-2 h-2 rounded-full ${service.status === 'online' ? 'bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]' : 'bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.8)]'}`} />
-              <span className="font-mono text-[10px] text-gray-300 uppercase tracking-wider">{service.name}</span>
+              <div className={`w-2 h-2 rounded-full transition-all duration-300 ${service.status === 'online' ? 'bg-[#10b981] animate-pulse-glow shadow-[0_0_12px_rgba(16,185,129,0.8)]' : 'bg-[#fbbf24] shadow-[0_0_12px_rgba(251,191,36,0.8)]'}`} />
+              <span className="font-space text-[10px] text-gray-300 uppercase tracking-widest group-hover:text-[#22d3ee] transition-colors">{service.name}</span>
             </div>
             <div className="flex items-center gap-4">
-               <span className="font-mono text-[10px] text-gray-500 italic">{service.latency}ms</span>
-               <span className="font-mono text-[9px] text-emerald-400/80 font-bold uppercase">{service.status === 'online' ? '● Stable' : '● Warning'}</span>
+               <span className="font-space text-[9px] text-gray-500 italic tabular-nums">{service.latency}ms</span>
+               <span className={`font-space text-[9px] font-bold uppercase tracking-tighter ${service.status === 'online' ? 'text-[#10b981]' : 'text-[#fbbf24]'}`}>
+                 {service.status === 'online' ? 'STATUS_OK' : 'STATUS_WARN'}
+               </span>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-8 pt-4 border-t border-white/5 flex justify-between items-center bg-[#1e293b]/50 p-3 rounded-xl">
-        <span className="font-mono text-[8px] text-gray-600 uppercase tracking-widest">Global Status</span>
-        <span className="font-mono text-[8px] text-emerald-500 font-black uppercase tracking-widest">ALL MICROSERVICES OPERATIONAL</span>
+      <div className="mt-8 pt-4 border-t border-white/5 flex justify-between items-center bg-white/5 p-3 rounded-sm">
+        <span className="font-space text-[8px] text-gray-600 uppercase tracking-widest">Master_Protocol</span>
+        <span className="font-space text-[8px] text-[#10b981] font-black uppercase tracking-[0.2em]">ALL_SYSTEMS_OPERATIONAL</span>
       </div>
     </div>
   );

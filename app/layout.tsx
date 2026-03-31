@@ -1,7 +1,15 @@
 import './globals.css';
 import { Metadata } from 'next';
+import { Inter, Space_Mono } from 'next/font/google';
 import ClientLayout from '../components/ClientLayout';
 import Providers from '../components/Providers';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
+const spaceMono = Space_Mono({ 
+  weight: ['400', '700'],
+  subsets: ['latin'], 
+  variable: '--font-space' 
+});
 
 export const metadata: Metadata = {
   title: 'Pratham Vishwakarma | Backend & DevOps Engineer',

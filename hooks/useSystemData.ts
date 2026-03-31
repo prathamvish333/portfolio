@@ -15,6 +15,9 @@ export interface SystemMetrics {
   requestsPerSecond: number;
   errorRate: number;
   uptime: string;
+  cpuUsage: number;
+  memoryUsage: number;
+  networkTraffic: number;
 }
 
 export interface ServiceStatus {
@@ -45,6 +48,9 @@ export function useSystemData() {
     requestsPerSecond: 45,
     errorRate: 0.02,
     uptime: '99.99%',
+    cpuUsage: 42,
+    memoryUsage: 68,
+    networkTraffic: 245,
   });
 
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -53,6 +59,8 @@ export function useSystemData() {
     { name: 'Notes API', status: 'online', latency: 45, lastChecked: 'Just now' },
     { name: 'Auth Service', status: 'online', latency: 32, lastChecked: 'Just now' },
     { name: 'Database', status: 'online', latency: 5, lastChecked: 'Just now' },
+    { name: 'Jenkins', status: 'online', latency: 12, lastChecked: 'Just now' },
+    { name: 'K8s Cluster', status: 'online', latency: 8, lastChecked: 'Just now' },
   ]);
 
   // Stable metrics update
@@ -62,6 +70,9 @@ export function useSystemData() {
       requestsPerSecond: Math.max(30, Math.min(100, prev.requestsPerSecond + (Math.random() * 10 - 5))),
       errorRate: Math.max(0.01, Math.min(0.05, prev.errorRate + (Math.random() * 0.01 - 0.005))),
       uptime: '99.9%',
+      cpuUsage: Math.max(30, Math.min(95, prev.cpuUsage + (Math.random() * 10 - 5))),
+      memoryUsage: Math.max(40, Math.min(90, prev.memoryUsage + (Math.random() * 4 - 2))),
+      networkTraffic: Math.max(100, Math.min(800, prev.networkTraffic + (Math.random() * 50 - 25))),
     }));
   }, []);
 

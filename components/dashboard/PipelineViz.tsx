@@ -15,27 +15,30 @@ export default function PipelineViz() {
   const [hoveredStage, setHoveredStage] = useState<string | null>(null);
 
   return (
-    <div className="glass-card rounded-3xl p-8 h-full flex flex-col justify-center">
+    <div className="dashboard-wrapper p-8 h-full flex flex-col justify-center scanline-overlay">
       <div className="flex items-center justify-between mb-12">
-        <h3 className="font-heading text-sm font-black text-gray-400 tracking-widest uppercase">Deployment Pipeline</h3>
+        <div className="flex items-center gap-3">
+          <div className="w-1.5 h-1.5 rounded-full bg-[#fbbf24] animate-flicker" />
+          <h3 className="font-space text-[10px] font-black text-[#fbbf24] tracking-[0.2em] uppercase">Control_Pipeline_Flow</h3>
+        </div>
         <div className="flex gap-2">
-            <span className="font-mono text-[8px] text-emerald-500 font-black uppercase tracking-widest">STATUS: HEALTHY</span>
+            <span className="font-space text-[8px] text-[#10b981] font-black uppercase tracking-[0.2em] animate-pulse">STATUS_READY</span>
         </div>
       </div>
 
-      <div className="flex items-center justify-between relative max-w-4xl mx-auto w-full">
+      <div className="flex items-center justify-between relative max-w-4xl mx-auto w-full px-4">
         {/* Connection Line */}
-        <div className="absolute top-1/2 left-0 right-0 h-[2px] bg-white/5 -translate-y-1/2" />
+        <div className="absolute top-[14px] left-0 right-0 h-[1px] bg-white/5 -translate-y-1/2" />
         
         {pipelineStages.map((stage, i) => (
           <div key={stage.id} className="relative flex flex-col items-center">
             {/* Animated Flow Line */}
             {i < pipelineStages.length - 1 && (
-               <div className="absolute top-[14px] left-[28px] w-[calc(100vw/5-40px)] md:w-[150px] h-[2px] overflow-hidden">
+               <div className="absolute top-[14px] left-[15px] w-[calc(100vw/5-50px)] md:w-[130px] h-[1px] overflow-hidden">
                   <motion.div 
                     animate={{ x: [-150, 150] }}
-                    transition={{ repeat: Infinity, duration: 2, ease: "linear", delay: i * 0.4 }}
-                    className="w-full h-full bg-teal-500/40"
+                    transition={{ repeat: Infinity, duration: 2.5, ease: "linear", delay: i * 0.5 }}
+                    className="w-full h-full bg-[#fbbf24]/30"
                   />
                </div>
             )}
@@ -46,30 +49,35 @@ export default function PipelineViz() {
               onMouseLeave={() => setHoveredStage(null)}
               whileHover={{ scale: 1.2 }}
               className={`w-7 h-7 rounded-full z-10 cursor-help flex items-center justify-center transition-all duration-300 ${
-                hoveredStage === stage.id ? 'bg-teal-500 shadow-[0_0_20px_rgba(13,148,136,0.6)]' : 'bg-[#111827] border-2 border-white/10'
+                hoveredStage === stage.id ? 'bg-[#fbbf24] shadow-[0_0_20px_rgba(251,191,36,0.6)]' : 'bg-[#111827] border border-white/20'
               }`}
             >
-              <div className={`w-2.5 h-2.5 rounded-full ${hoveredStage === stage.id ? 'bg-white' : 'bg-teal-500/40'}`} />
+              <div className={`w-2 h-2 rounded-full ${hoveredStage === stage.id ? 'bg-[#05070d] animate-flicker' : 'bg-[#fbbf24]/20'}`} />
             </motion.div>
 
             {/* Label */}
             <div className="mt-4 text-center">
-              <p className="font-heading text-[11px] font-black text-white uppercase tracking-wider">{stage.label}</p>
-              <p className="font-mono text-[9px] text-gray-500 uppercase mt-1 tracking-tight">{stage.tool}</p>
+              <p className="font-space text-[10px] font-black text-white uppercase tracking-widest">{stage.label}</p>
+              <p className="font-space text-[8px] text-gray-500 uppercase mt-1 tracking-tighter tabular-nums">{stage.tool}</p>
             </div>
 
             {/* Tooltip */}
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
               {hoveredStage === stage.id && (
                 <motion.div
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute -top-24 left-1/2 -translate-x-1/2 w-48 p-4 bg-[#05070d] border border-teal-500/30 rounded-xl shadow-2xl z-50 pointer-events-none"
+                  className="absolute -top-32 left-1/2 -translate-x-1/2 w-40 p-3 bg-[#05070d]/95 backdrop-blur-xl border border-[#fbbf24]/30 rounded-sm shadow-2xl z-50 pointer-events-none"
                 >
-                  <p className="font-heading text-[10px] font-black text-teal-400 uppercase tracking-widest mb-1">{stage.label} Layer</p>
-                  <p className="text-[10px] text-gray-400 leading-relaxed font-bold uppercase">{stage.desc}</p>
-                  <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-3 h-3 bg-[#05070d] border-b border-r border-teal-500/30 rotate-45" />
+                  <p className="font-space text-[8px] font-black text-[#fbbf24] uppercase tracking-[0.2em] mb-2">{stage.label}_Protocol</p>
+                  <div className="space-y-1">
+                    <p className="text-[7px] text-gray-400 leading-normal font-bold uppercase tracking-widest">{stage.desc}</p>
+                    <div className="pt-1 border-t border-white/5">
+                      <span className="text-[6px] text-gray-600 uppercase font-space font-black">Tool_ID: {stage.tool.replace(' ', '_')}</span>
+                    </div>
+                  </div>
+                  <div className="absolute bottom-[-4px] left-1/2 -translate-x-1/2 w-2 h-2 bg-[#05070d] border-b border-r border-[#fbbf24]/30 rotate-45" />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -77,14 +85,15 @@ export default function PipelineViz() {
         ))}
       </div>
 
-      <div className="mt-12 flex justify-center gap-12 opacity-40">
+      <div className="mt-12 flex justify-center gap-12 opacity-30">
          <div className="flex flex-col items-center gap-2">
-            <span className="font-mono text-[8px] text-gray-600 uppercase tracking-widest">CI/CD Standard</span>
-            <span className="font-mono text-[9px] text-[#2dd4bf] font-black uppercase">GitOps Flow</span>
+            <span className="font-space text-[7px] text-gray-600 uppercase tracking-widest">Protocol_Standard</span>
+            <span className="font-space text-[8px] text-[#fbbf24] font-black uppercase tracking-[0.2em]">GITOPS_FLOW</span>
          </div>
-         <div className="flex flex-col items-center gap-2 border-l border-white/5 pl-12">
-            <span className="font-mono text-[8px] text-gray-600 uppercase tracking-widest">Environment</span>
-            <span className="font-mono text-[9px] text-[#2dd4bf] font-black uppercase">Production</span>
+         <div className="flex items-center h-4 w-[1px] bg-white/5" />
+         <div className="flex flex-col items-center gap-2">
+            <span className="font-space text-[7px] text-gray-600 uppercase tracking-widest">Master_Deployment</span>
+            <span className="font-space text-[8px] text-[#fbbf24] font-black uppercase tracking-[0.2em]">K8S_PRODUCTION</span>
          </div>
       </div>
     </div>
