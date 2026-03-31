@@ -12,11 +12,13 @@ spec:
     metadata:
       labels:
         app: portfolio-frontend
+      annotations:
+        rollout-timestamp: "${new Date().toISOString()}"
     spec:
       containers:
       - name: portfolio-frontend
         image: prathamvish333/portfolio:dev
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
         resources:
