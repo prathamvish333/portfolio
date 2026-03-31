@@ -13,7 +13,7 @@ spec:
       labels:
         app: portfolio-frontend
       annotations:
-        rollout-timestamp: "${new Date().toISOString()}"
+        rollout-timestamp: "2026-03-31T18:30:00Z"
     spec:
       containers:
       - name: portfolio-frontend
