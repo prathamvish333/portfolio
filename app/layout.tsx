@@ -1,14 +1,19 @@
 import './globals.css';
 import { Metadata } from 'next';
-import { Inter, Space_Mono } from 'next/font/google';
+import { Inter, Space_Mono, JetBrains_Mono } from 'next/font/google';
 import ClientLayout from '../components/ClientLayout';
 import Providers from '../components/Providers';
+import { ReactLenis } from 'lenis/react';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const spaceMono = Space_Mono({ 
   weight: ['400', '700'],
   subsets: ['latin'], 
   variable: '--font-space' 
+});
+const jetBrainsMono = JetBrains_Mono({ 
+  subsets: ['latin'], 
+  variable: '--font-mono' 
 });
 
 export const metadata: Metadata = {
@@ -33,20 +38,24 @@ export const metadata: Metadata = {
   },
 };
 
+import SmoothScroll from '../components/SmoothScroll';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${spaceMono.variable} ${jetBrainsMono.variable}`}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="bg-background text-terminal-text antialiased">
-        <Providers>
-          <ClientLayout>
-            {children}
-          </ClientLayout>
-        </Providers>
+      <body className="bg-black text-[#e5e7eb] antialiased selection:bg-teal-500/30">
+        <SmoothScroll>
+          <Providers>
+            <ClientLayout>
+              {children}
+            </ClientLayout>
+          </Providers>
+        </SmoothScroll>
       </body>
     </html>
   );

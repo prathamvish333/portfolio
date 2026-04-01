@@ -12,6 +12,15 @@ module.exports = {
         'space-bg': '#05070d',
         'system-green': '#10b981',
         'critical-red': '#ef4444',
+        'terminal-green': '#0d9488',
+        'terminal-teal': '#0d9488',
+        'terminal-teal-hover': '#14b8a6',
+        'terminal-teal-glow': '#2dd4bf',
+        'terminal-teal-muted': '#134e4a',
+        'terminal-board': '#0b1120',
+        'terminal-dim': '#111827',
+        'terminal-text': '#e5e7eb',
+        'terminal-muted': '#9ca3af'
       },
       fontFamily: {
         sans: ['var(--font-sans)', 'Inter', 'sans-serif'],
@@ -32,6 +41,11 @@ module.exports = {
           '50%': { opacity: 0.8 },
         },
       },
+      boxShadow: {
+        'terminal-glow': '0 0 15px rgba(13, 148, 136, 0.1)',
+        'terminal-glow-hover': '0 0 20px rgba(20, 184, 166, 0.3)',
+        'teal-glow': '0 0 20px rgba(13, 148, 136, 0.2)',
+      }
     },
   },
   plugins: [],

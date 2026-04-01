@@ -3,9 +3,8 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { SoundProvider, useSoundContext } from '../context/SoundContext';
-import { useOS } from '../context/OSContext';
+import { useTarsStore } from '../store/useTarsStore';
 import AnimatedBackground from '../components/AnimatedBackground';
-import BootSequence from './BootSequence';
 import DevTerminal from './DevTerminal';
 
 function VolumeToggle() {
@@ -14,22 +13,21 @@ function VolumeToggle() {
   return (
     <button
       onClick={toggleMute}
-      className="font-mono text-xs text-terminal-muted transition-colors hover:text-terminal-green"
+      className="nasa-text text-[8px] text-gray-700 transition-colors hover:text-white"
     >
-      [{isMuted ? '🔇 AUDIO: OFF' : '🔊 AUDIO: ON'}]
+      [{isMuted ? 'AUDIO: OFF' : 'AUDIO: ON'}]
     </button>
   );
 }
 
 export default function ClientLayout({ children }: { children: ReactNode }) {
-  const { isRecruiterMode } = useOS();
+  const { isTarsMode } = useTarsStore();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     // Robust navigation guard
-    const token = window.localStorage.getItem('token');
-    // Notes are publicly viewable; only settings requires auth
+    const token = typeof window !== 'undefined' ? window.localStorage.getItem('token') : null;
     const isRestrictedPath = pathname === '/settings';
     
     if (!token && isRestrictedPath) {
@@ -46,11 +44,11 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    const inWindow = searchParams.get('window') === 'true' || window.self !== window.top;
+    const inWindow = searchParams.get('window') === 'true' || (typeof window !== 'undefined' && window.self !== window.top);
     setIsWindowMode(inWindow);
 
     // Recursion check: If we are in an iframe and trying to load the dashboard again
-    const isIframe = window.self !== window.top;
+    const isIframe = typeof window !== 'undefined' && window.self !== window.top;
     if (isIframe && pathname === '/') {
       setIsRecursive(true);
     }
@@ -58,40 +56,38 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
 
   if (isRecursive) return null; // Prevent windows inside windows
 
-  const showTopPanel = pathname !== '/' && pathname !== '/desktop' && pathname !== '/login' && pathname !== '/signup' && pathname !== '/prathams-os' && pathname !== '/engineering' && !isWindowMode;
+  const showTopPanel = pathname !== '/' && pathname !== '/desktop' && pathname !== '/login' && pathname !== '/signup' && pathname !== '/prathams-os' && pathname !== '/engineering' && pathname !== '/about' && !isWindowMode;
 
   return (
     <>
-      {!isWindowMode && <AnimatedBackground isRecruiterMode={isRecruiterMode} />}
+      {/* Suppress old background for the cinematic Interstellar look */}
+      {!isWindowMode && isTarsMode && <AnimatedBackground isRecruiterMode={false} />}
 
         <div className={`flex min-h-screen flex-col ${isWindowMode ? 'bg-black/40 backdrop-blur-md' : 'bg-transparent'}`}>
-          {/* Top Panel / Terminal Header */}
+          {/* Top Panel / Terminal Header (Refactored for NASA aesthetic) */}
           {showTopPanel && (
-            <header className="fixed top-0 z-50 flex w-full items-center justify-between border-b border-terminal-green/20 bg-terminal-board/80 px-6 py-3 backdrop-blur-md">
+            <header className="fixed top-0 z-[60] flex w-full items-center justify-between border-b border-white/5 bg-black/80 px-6 py-3 backdrop-blur-md">
               <div className="flex items-center gap-3">
-                {/* Linux Terminal Dots */}
                 <div className="flex gap-1.5 group">
                   <div
                     onClick={handleCloseClick}
-                    className="h-3 w-3 rounded-full bg-red-500/80 shadow-[0_0_5px_rgba(239,68,68,0.5)] cursor-pointer hover:bg-red-500 flex items-center justify-center transition-all"
-                  >
-                    <span className="text-[8px] text-black opacity-0 group-hover:opacity-100 leading-none pb-[1px]">x</span>
-                  </div>
-                  <div className="h-3 w-3 rounded-full bg-yellow-500/80 shadow-[0_0_5px_rgba(234,179,8,0.5)]"></div>
-                  <div className="h-3 w-3 rounded-full bg-terminal-green/80 shadow-[0_0_5px_rgba(0,255,65,0.5)]"></div>
+                    className="h-2 w-2 rounded-full bg-red-500/80 cursor-pointer hover:bg-red-500 transition-all"
+                  />
+                  <div className="h-2 w-2 rounded-full bg-yellow-500/80" />
+                  <div className="h-2 w-2 rounded-full bg-green-500/80" />
                 </div>
 
-                <div className="ml-4 flex items-baseline gap-2 font-mono">
-                  <span className="text-sm font-bold tracking-tight text-terminal-green">notes-studio</span>
-                  <span className="text-xs text-terminal-muted">~/projects/pratham</span>
+                <div className="ml-4 flex items-baseline gap-2">
+                  <span className="nasa-text text-[9px] text-white">SUBSYSTEM_ENV</span>
+                  <span className="nasa-text text-[7px] text-gray-700">~/ROOT/SECURE</span>
                 </div>
               </div>
 
               {/* Header Actions */}
               <div className="flex items-center gap-4">
                 <VolumeToggle />
-                <div className="font-mono text-xs text-terminal-green">
-                  [SECURE_CONNECTION_ESTABLISHED]
+                <div className="nasa-text text-[7px] text-[#fbbf24]">
+                  [CONNECTION: ENCRYPTED]
                 </div>
               </div>
             </header>
@@ -102,13 +98,8 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
             {children}
           </main>
 
-          {/* Matrix Scanline Effect Overlay (Disabled in Recruiter Mode) */}
-          {!isRecruiterMode && (
-            <div className="pointer-events-none fixed inset-0 z-50 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] opacity-20"></div>
-          )}
-
-          {/* Developer Terminal (Disabled in Recruiter Mode) */}
-          {!isRecruiterMode && <DevTerminal />}
+          {/* Developer Terminal (Only in Tars/Terminal Mode) */}
+          {isTarsMode && <DevTerminal />}
       </div>
     </>
   );
