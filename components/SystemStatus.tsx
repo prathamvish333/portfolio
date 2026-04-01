@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 
 export default function SystemStatus() {
   const [latency, setLatency] = useState(110);
+  const [status, setStatus] = useState('Online');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -18,48 +19,48 @@ export default function SystemStatus() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9, x: 20 }}
-      animate={{ opacity: 1, scale: 1, x: 0 }}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
       className="fixed bottom-8 right-8 z-40 hidden lg:block"
     >
-      <div className="bg-[#05070d]/90 backdrop-blur-3xl border border-[#fbbf24]/20 rounded-sm p-5 shadow-2xl overflow-hidden group hover:border-[#fbbf24]/40 transition-all duration-500 scale-90 origin-bottom-right scanline-overlay">
-        <div className="flex items-center gap-3 mb-4">
+      <div className="bg-[#1e293b]/95 border border-white/10 rounded-2xl p-4 shadow-2xl overflow-hidden group hover:border-[#0d9488]/30 transition-all">
+        <div className="flex items-center gap-3 mb-3">
           <div className="relative">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#fbbf24] animate-ping absolute" />
-            <div className="w-1.5 h-1.5 rounded-full bg-[#fbbf24] relative shadow-[0_0_10px_rgba(251,191,36,0.6)]" />
+            <div className="w-2 h-2 rounded-full bg-teal-500 animate-ping absolute" />
+            <div className="w-2 h-2 rounded-full bg-teal-500 relative" />
           </div>
-          <span className="font-space text-[10px] font-black uppercase tracking-[0.3em] text-[#fbbf24]">System_Protocol_Active</span>
+          <span className="font-heading text-[10px] font-black uppercase tracking-[0.2em] text-[#e5e7eb]">System Status</span>
         </div>
 
-        <div className="space-y-3.5">
-          <div className="flex items-center justify-between gap-10">
-            <span className="font-space text-[9px] text-gray-600 uppercase tracking-widest">Master_API</span>
-            <span className="font-space text-[9px] text-[#10b981] font-bold uppercase tracking-tighter">STATUS_OK</span>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-8">
+            <span className="font-mono text-[9px] text-gray-500 uppercase tracking-widest">Notes API</span>
+            <span className="font-mono text-[9px] text-teal-400 font-bold uppercase">● Online</span>
           </div>
-          <div className="flex items-center justify-between gap-10">
-            <span className="font-space text-[9px] text-gray-600 uppercase tracking-widest">Async_Wait</span>
-            <span className="font-space text-[9px] text-[#22d3ee] font-black uppercase tracking-widest tabular-nums">{latency}ms</span>
+          <div className="flex items-center justify-between gap-8">
+            <span className="font-mono text-[9px] text-gray-500 uppercase tracking-widest">Latency</span>
+            <span className="font-mono text-[9px] text-teal-500 font-bold uppercase tracking-tighter">{latency}ms</span>
           </div>
-          <div className="flex items-center justify-between gap-10">
-            <span className="font-space text-[9px] text-gray-600 uppercase tracking-widest">Env_Layer</span>
-            <span className="font-space text-[9px] text-white font-black uppercase tracking-widest">PROD_V4</span>
+          <div className="flex items-center justify-between gap-8">
+            <span className="font-mono text-[9px] text-gray-500 uppercase tracking-widest">Environment</span>
+            <span className="font-mono text-[9px] text-[#e5e7eb] font-bold uppercase">Production</span>
           </div>
-          <div className="flex items-center justify-between gap-10">
-            <span className="font-space text-[9px] text-gray-600 uppercase tracking-widest">Uptime_Sync</span>
-            <span className="font-space text-[9px] text-gray-300 font-bold uppercase tracking-widest tabular-nums">99.99%</span>
+          <div className="flex items-center justify-between gap-8">
+            <span className="font-mono text-[9px] text-gray-500 uppercase tracking-widest">Last Deploy</span>
+            <span className="font-mono text-[9px] text-gray-300 font-bold uppercase underline decoration-teal-500/30">2 Days Ago</span>
           </div>
         </div>
 
-        <div className="mt-5 pt-4 border-t border-white/5 space-y-3">
-          <div className="flex justify-between items-center text-[7px] font-space text-gray-700 uppercase tracking-[0.2em] font-black">
-            <span>Kernel_Stable</span>
-            <span className="text-[#fbbf24]/60">0x4F92_NOMINAL</span>
+        <div className="mt-5 pt-4 border-t border-white/[0.03] space-y-3">
+          <div className="flex justify-between items-center text-[8px] font-mono text-gray-600 uppercase tracking-widest">
+            <span>Uptime 99.9%</span>
+            <span>v4.2.1-stable</span>
           </div>
-          <div className="h-[1px] w-full bg-white/5 rounded-full overflow-hidden">
+          <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
             <motion.div 
-              animate={{ x: [-150, 150] }}
-              transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
-              className="h-full w-20 bg-gradient-to-r from-transparent via-[#fbbf24]/40 to-transparent"
+              animate={{ x: [-100, 200] }}
+              transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+              className="h-full w-24 bg-gradient-to-r from-transparent via-teal-500/40 to-transparent"
             />
           </div>
         </div>

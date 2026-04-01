@@ -1,22 +1,9 @@
 'use client';
 
-import { ReactLenis } from '@studio-freight/react-lenis';
-import { ReactNode, useEffect, useState } from 'react';
+// Lenis completely disabled — it conflicts with both GSAP ScrollTrigger (cinematic mode)
+// and Framer Motion useScroll/useTransform (recruiter mode), causing double-smoothing lag.
+// Native CSS scroll-behavior: smooth in globals.css handles this cleanly instead.
 
 export default function SmoothScroll({ children }: { children: any }) {
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return <>{children}</>;
-  }
-
-  return (
-    <ReactLenis root options={{ lerp: 0.1, duration: 1.5, smoothWheel: true }}>
-      {children}
-    </ReactLenis>
-  );
+  return <>{children}</>;
 }

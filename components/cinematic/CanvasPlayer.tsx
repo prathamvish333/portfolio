@@ -1,115 +1,28 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useImperativeHandle, forwardRef, useCallback } from 'react';
 import { getFrameUrl } from '../../utils/frame-loader';
 
-interface CanvasPlayerProps {
-  sceneId: string;
-  frameCount: number;
-  currentFrame: number;
-  opacity?: number;
-  blur?: number;
-  className?: string;
+export interface CanvasPlayerHandle {
+  setFrame: (frame: number) => void;
 }
 
-export default function CanvasPlayer({ sceneId, frameCount, currentFrame, opacity = 1, blur = 0, className }: CanvasPlayerProps) {
+const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
-  const [isReady, setIsReady] = useState(false);
-
-  // Preload logic that reacts to sceneId changes
-  useEffect(() => {
-    let mounted = true;
-    const preload = async () => {
-      // Preload first batch for the NEW scene
-      const firstBatch = [];
-      for (let i = 0; i < Math.min(20, frameCount); i++) {
-        firstBatch.push(loadFrame(sceneId, i));
-      }
-      await Promise.all(firstBatch);
-      if (mounted) setIsReady(true);
-
-      // Lazy load the rest in the background
-      for (let i = 20; i < frameCount; i++) {
-        if (!mounted) break;
-        loadFrame(sceneId, i);
-        if (i % 20 === 0) await new Promise(r => setTimeout(r, 20));
-      }
-    };
-
-    const loadFrame = (sid: string, index: number): Promise<HTMLImageElement> => {
-      const key = `${sid}-${index}`;
-      if (imagesRef.current.has(key)) return Promise.resolve(imagesRef.current.get(key)!);
-      
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          imagesRef.current.set(key, img);
-          resolve(img);
-        };
-        img.onerror = () => resolve(img);
-        img.src = getFrameUrl(sid, index);
-      });
-    };
-
-    preload();
-    
-    // Cleanup old scenes from the map to save memory if map gets too large
-    // (Optional: keep last 2 scenes for backward scroll performance)
-    if (imagesRef.current.size > 800) {
-       // Simple pruning: remove alles and just keep current
-       const currentPrefix = `${sceneId}-`;
-       for (const key of imagesRef.current.keys()) {
-         if (!key.startsWith(currentPrefix)) {
-            imagesRef.current.delete(key);
-         }
-       }
-    }
-
-    return () => {
-      mounted = false;
-    };
-  }, [sceneId, frameCount]);
-
-  // Draw logic
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const key = `${sceneId}-${Math.floor(currentFrame)}`; // ensure integers
-    const img = imagesRef.current.get(key);
-    
-    if (img) {
-      const canvasWidth = canvas.width;
-      const canvasHeight = canvas.height;
-      
-      // Clear canvas before drawing
-      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-      const ratio = Math.max(canvasWidth / img.width, canvasHeight / img.height);
-      const newWidth = img.width * ratio;
-      const newHeight = img.height * ratio;
-      const x = (canvasWidth - newWidth) / 2;
-      const y = (canvasHeight - newHeight) / 2;
-
-      ctx.drawImage(img, x, y, newWidth, newHeight);
-    }
-  }, [sceneId, currentFrame, isReady]);
+  const imagesRef = useRef<Map<number, HTMLImageElement>>(new Map());
+  const lastDrawnFrame = useRef(-1);
 
   // Handle resize
   useEffect(() => {
     const handleResize = () => {
       if (canvasRef.current) {
-        // High DPI canvas support
         const dpr = window.devicePixelRatio || 1;
         canvasRef.current.width = window.innerWidth * dpr;
         canvasRef.current.height = window.innerHeight * dpr;
-        
-        canvasRef.current.style.width = `${window.innerWidth}px`;
-        canvasRef.current.style.height = `${window.innerHeight}px`;
+        // Redraw after resize
+        if (lastDrawnFrame.current >= 0) {
+          drawFrame(lastDrawnFrame.current);
+        }
       }
     };
     window.addEventListener('resize', handleResize);
@@ -117,11 +30,107 @@ export default function CanvasPlayer({ sceneId, frameCount, currentFrame, opacit
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Preload a batch of frames around current position
+  const preloadAround = useCallback((idx: number) => {
+    const PRELOAD_AHEAD = 40;
+    const cache = imagesRef.current;
+    for (let i = Math.max(0, idx - 5); i < Math.min(1260, idx + PRELOAD_AHEAD); i++) {
+      if (!cache.has(i)) {
+        const img = new Image();
+        img.src = getFrameUrl(i);
+        cache.set(i, img);
+      }
+    }
+    // GC: trim cache when too large
+    if (cache.size > 200) {
+      for (const key of cache.keys()) {
+        if (key < idx - 60 || key > idx + 120) {
+          cache.delete(key);
+        }
+      }
+    }
+  }, []);
+
+  const drawImageCover = useCallback((ctx: CanvasRenderingContext2D, img: HTMLImageElement, cw: number, ch: number) => {
+    const ratio = Math.max(cw / img.width, ch / img.height);
+    const nw = img.width * ratio;
+    const nh = img.height * ratio;
+    ctx.drawImage(img, (cw - nw) / 2, (ch - nh) / 2, nw, nh);
+  }, []);
+
+  const isReady = (img: HTMLImageElement | undefined): img is HTMLImageElement => {
+    return !!img && img.complete && img.naturalWidth !== 0;
+  };
+
+  const drawFrame = useCallback((frameFloat: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d', { alpha: false });
+    if (!ctx) return;
+
+    // Round to 2 decimal places to avoid excessive redraws
+    const rounded = Math.round(frameFloat * 100) / 100;
+    if (rounded === lastDrawnFrame.current) return;
+    lastDrawnFrame.current = rounded;
+
+    const idxA = Math.floor(frameFloat);
+    const idxB = Math.min(idxA + 1, 1259); // next frame, clamped
+    const blend = frameFloat - idxA; // 0.0 to 0.99..
+
+    // Preload in background
+    preloadAround(idxA);
+
+    const imgA = imagesRef.current.get(idxA);
+    const imgB = imagesRef.current.get(idxB);
+    const cw = canvas.width;
+    const ch = canvas.height;
+
+    if (isReady(imgA) && isReady(imgB) && blend > 0.01) {
+      // Sub-frame blending: draw frame A, then overlay frame B with blend alpha
+      ctx.globalAlpha = 1;
+      drawImageCover(ctx, imgA, cw, ch);
+      ctx.globalAlpha = blend;
+      drawImageCover(ctx, imgB, cw, ch);
+      ctx.globalAlpha = 1;
+    } else if (isReady(imgA)) {
+      // Snap to frame A (blend is ~0 or B isn't loaded yet)
+      ctx.globalAlpha = 1;
+      drawImageCover(ctx, imgA, cw, ch);
+    } else {
+      // Not cached — load and draw when ready
+      const fallback = new Image();
+      fallback.onload = () => {
+        imagesRef.current.set(idxA, fallback);
+        if (Math.floor(lastDrawnFrame.current) === idxA) {
+          ctx.globalAlpha = 1;
+          drawImageCover(ctx, fallback, cw, ch);
+        }
+      };
+      fallback.src = getFrameUrl(idxA);
+      imagesRef.current.set(idxA, fallback);
+    }
+  }, [preloadAround, drawImageCover]);
+
+  // Expose imperative API — no React state, no re-renders
+  useImperativeHandle(ref, () => ({
+    setFrame: (frame: number) => {
+      drawFrame(frame);
+    },
+  }), [drawFrame]);
+
+  // Preload first batch on mount
+  useEffect(() => {
+    preloadAround(0);
+  }, [preloadAround]);
+
   return (
     <canvas
       ref={canvasRef}
-      style={{ opacity, filter: blur > 0 ? `blur(${blur}px)` : 'none' }}
-      className={`absolute inset-0 w-full h-full z-0 transition-opacity duration-75 ${className || ''}`}
+      className="absolute inset-0 w-full h-full z-0 pointer-events-none"
+      style={{ imageRendering: 'auto' }}
     />
   );
-}
+});
+
+export default CanvasPlayer;

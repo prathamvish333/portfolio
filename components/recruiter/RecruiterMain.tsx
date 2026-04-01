@@ -1,8 +1,14 @@
 'use client';
 
 import React from 'react';
-import TarsTerminal from '../TarsTerminal';
+import ProdLandingPage from './ProdLandingPage';
+
+import { OSProvider } from '../../context/OSContext';
 
 export default function RecruiterMain() {
-  return <TarsTerminal />;
+  return (
+      <OSProvider>
+          <ProdLandingPage />
+      </OSProvider>
+  );
 }

@@ -21,7 +21,7 @@ const COMMANDS: Record<string, string> = {
 01  Notes Studio     Full-stack collaborative note platform
     Name:  Notes Studio
     Role:  Full-Stack Developer
-    URL:   /notes
+    URL:   ${process.env.NEXT_PUBLIC_NOTES_URL || 'http://localhost:3001'}
     Desc:  A secure platform engineering workspace.
     Tech:  [FastAPI, Next.js, Docker, Kubernetes, NLP]
 
@@ -113,7 +113,7 @@ export default function DevTerminal() {
     } else if (cmd === 'notes') {
       setHistory(prev => [...prev, { input: cmd, output: 'Launching Notes Studio Workspace...' }]);
       setTimeout(() => {
-        window.location.href = '/notes';
+        window.location.href = process.env.NEXT_PUBLIC_NOTES_URL || 'http://localhost:3001';
       }, 1000);
       setInput('');
       return;
