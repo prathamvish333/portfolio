@@ -7,10 +7,12 @@ interface CanvasPlayerProps {
   sceneId: string;
   frameCount: number;
   currentFrame: number;
+  opacity?: number;
+  blur?: number;
   className?: string;
 }
 
-export default function CanvasPlayer({ sceneId, frameCount, currentFrame, className }: CanvasPlayerProps) {
+export default function CanvasPlayer({ sceneId, frameCount, currentFrame, opacity = 1, blur = 0, className }: CanvasPlayerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<Map<string, HTMLImageElement>>(new Map());
   const [isReady, setIsReady] = useState(false);
@@ -77,13 +79,16 @@ export default function CanvasPlayer({ sceneId, frameCount, currentFrame, classN
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const key = `${sceneId}-${currentFrame}`;
+    const key = `${sceneId}-${Math.floor(currentFrame)}`; // ensure integers
     const img = imagesRef.current.get(key);
     
     if (img) {
       const canvasWidth = canvas.width;
       const canvasHeight = canvas.height;
       
+      // Clear canvas before drawing
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
       const ratio = Math.max(canvasWidth / img.width, canvasHeight / img.height);
       const newWidth = img.width * ratio;
       const newHeight = img.height * ratio;
@@ -98,8 +103,13 @@ export default function CanvasPlayer({ sceneId, frameCount, currentFrame, classN
   useEffect(() => {
     const handleResize = () => {
       if (canvasRef.current) {
-        canvasRef.current.width = window.innerWidth;
-        canvasRef.current.height = window.innerHeight;
+        // High DPI canvas support
+        const dpr = window.devicePixelRatio || 1;
+        canvasRef.current.width = window.innerWidth * dpr;
+        canvasRef.current.height = window.innerHeight * dpr;
+        
+        canvasRef.current.style.width = `${window.innerWidth}px`;
+        canvasRef.current.style.height = `${window.innerHeight}px`;
       }
     };
     window.addEventListener('resize', handleResize);
@@ -110,7 +120,8 @@ export default function CanvasPlayer({ sceneId, frameCount, currentFrame, classN
   return (
     <canvas
       ref={canvasRef}
-      className={`fixed inset-0 w-screen h-screen z-0 ${className}`}
+      style={{ opacity, filter: blur > 0 ? `blur(${blur}px)` : 'none' }}
+      className={`absolute inset-0 w-full h-full z-0 transition-opacity duration-75 ${className || ''}`}
     />
   );
 }
