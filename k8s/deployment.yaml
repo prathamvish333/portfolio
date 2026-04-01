@@ -13,12 +13,12 @@ spec:
       labels:
         app: portfolio-frontend
       annotations:
-        rollout-timestamp: "2026-04-01T20:30:00Z"
+        rollout-timestamp: "2026-04-01T21:01:00Z"
     spec:
       containers:
       - name: portfolio-frontend
         image: prathamvish333/portfolio:dev
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
         resources:
