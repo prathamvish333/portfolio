@@ -1,77 +1,68 @@
 'use client';
 
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
-import CanvasPlayer from './CanvasPlayer';
-import CinematicOverlay from './CinematicOverlay';
+import CanvasPlayer, { CanvasPlayerHandle } from './CanvasPlayer';
+import CinematicOverlay, { CinematicOverlayHandle } from './CinematicOverlay';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const SCENES_CONFIG = [
-  { id: 'scene1', frames: 180 },
-  { id: 'transition_scene1-scene2', frames: 180 },
-  { id: 'scene2', frames: 180 },
-  { id: 'transition_scene2-scene3', frames: 180 },
-  { id: 'scene3', frames: 180 },
-  { id: 'transition_scene3-scene4', frames: 180 },
-  { id: 'scene4', frames: 180 },
-];
+// Helper for masking canvas movement between scenes
+const mapP = (val: number, inM: number, inX: number, outM: number, outX: number) => {
+  if (val <= inM) return outM;
+  if (val >= inX) return outX;
+  return outM + (outX - outM) * ((val - inM) / (inX - inM));
+};
 
 export default function SceneManager() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<{ setFrame: (f: number) => void }>(null);
-  const overlayRef = useRef<{ setScene: (id: string, progress: number) => void }>(null);
+  const canvasRef = useRef<CanvasPlayerHandle>(null);
+  const overlayRef = useRef<CinematicOverlayHandle>(null);
 
-  const sceneBounds = useMemo(() => {
-    let acc = 0;
-    return SCENES_CONFIG.map(scene => {
-      const start = acc;
-      const end = acc + scene.frames - 1;
-      acc += scene.frames;
-      return { ...scene, globalStart: start, globalEnd: end };
-    });
-  }, []);
-
-  const totalFrames = sceneBounds[sceneBounds.length - 1].globalEnd + 1; // 1338
+  // Single Source of Truth
+  const targetProgress = useRef(0);
+  const currentProgress = useRef(0);
+  const rafId = useRef<number>();
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const anim = gsap.to({}, {
-      duration: 1,
-      onUpdate: function() {
-        const progress = this.progress();
-        const currentGlobalFrame = progress * (totalFrames - 1);
-
-        // Pass the FLOAT value — CanvasPlayer now does sub-frame blending
-        canvasRef.current?.setFrame(currentGlobalFrame);
-
-        // Find which scene we're in for overlay
-        let matchedScene = sceneBounds[0];
-        for (const scene of sceneBounds) {
-          if (currentGlobalFrame >= scene.globalStart && currentGlobalFrame < scene.globalEnd + 1) {
-            matchedScene = scene;
-            break;
-          }
-        }
-        const localProg = Math.max(0, Math.min(1, (currentGlobalFrame - matchedScene.globalStart) / matchedScene.frames));
-        overlayRef.current?.setScene(matchedScene.id, localProg);
-      },
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: 'top top',
-        end: '+=1000%',
-        pin: true,
-        scrub: 1.5,
+    // Decouple GSAP rendering — just use ScrollTrigger purely for tracking scroll progress
+    const st = ScrollTrigger.create({
+      trigger: containerRef.current,
+      start: 'top top',
+      end: '+=800%', // Condense the scroll length slightly as requested
+      pin: true,
+      onUpdate: (self) => {
+        targetProgress.current = self.progress;
       },
     });
 
-    return () => {
-      anim.scrollTrigger?.kill();
-      anim.kill();
+    // High performance rAF loop for syncing Engine
+    const renderLoop = () => {
+      // Linear interpolation (lerp) for buttery smooth progress
+      // 0.08 factor gives a slight glide but stops quickly when scrolling stops.
+      currentProgress.current += (targetProgress.current - currentProgress.current) * 0.08;
+
+      const p = currentProgress.current;
+
+      // 1. Sync Canvas (0 to 1 -> 0 to 1259 frames)
+      if (canvasRef.current) canvasRef.current.setFrame(p * 1259);
+
+      // 2. Sync Cinematic Overlay 
+      if (overlayRef.current) overlayRef.current.setProgress(p);
+
+      rafId.current = requestAnimationFrame(renderLoop);
     };
-  }, [sceneBounds, totalFrames]);
+
+    rafId.current = requestAnimationFrame(renderLoop);
+
+    return () => {
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+      st.kill();
+    };
+  }, []);
 
   return (
     <div ref={containerRef} className="relative w-full h-screen overflow-hidden bg-black">
