@@ -32,7 +32,7 @@ export default function SceneManager() {
     const st = ScrollTrigger.create({
       trigger: containerRef.current,
       start: 'top top',
-      end: '+=800%', // Condense the scroll length slightly as requested
+      end: '+=600%', // Shortened by 25% to reduce dragging feel
       pin: true,
       onUpdate: (self) => {
         targetProgress.current = self.progress;
@@ -41,9 +41,16 @@ export default function SceneManager() {
 
     // High performance rAF loop for syncing Engine
     const renderLoop = () => {
-      // Linear interpolation (lerp) for buttery smooth progress
-      // 0.08 factor gives a slight glide but stops quickly when scrolling stops.
-      currentProgress.current += (targetProgress.current - currentProgress.current) * 0.08;
+      // Linear interpolation (lerp) for fast but smooth progress
+      let diff = targetProgress.current - currentProgress.current;
+      
+      // Clamp small differences to prevent endless dragging sensation
+      if (Math.abs(diff) < 0.0001) {
+        currentProgress.current = targetProgress.current;
+      } else {
+        // Increased lerp factor (0.15) for faster visual feedback
+        currentProgress.current += diff * 0.15; 
+      }
 
       const p = currentProgress.current;
 
@@ -65,7 +72,11 @@ export default function SceneManager() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full h-screen overflow-hidden bg-black">
+    <div 
+      ref={containerRef} 
+      className="relative w-full h-screen overflow-hidden bg-black"
+      style={{ willChange: 'transform', transform: 'translateZ(0)' }}
+    >
       <CanvasPlayer ref={canvasRef} />
       <CinematicOverlay ref={overlayRef} />
     </div>

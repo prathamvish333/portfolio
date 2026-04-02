@@ -150,8 +150,9 @@ const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref
     const idxB = Math.min(idxA + 1, TOTAL_FRAMES - 1);
     const blend = frameFloat - idxA;
 
-    // Preload in background
-    preloadAround(idxA);
+    // Disabled active preloading during scroll loop! 
+    // This removes heavy DOM/network operations from the rAF critical path.
+    // preloadAround(idxA); 
 
     const imgA = imagesRef.current.get(idxA);
     const imgB = imagesRef.current.get(idxB);
@@ -168,7 +169,7 @@ const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref
       ctx.globalAlpha = 1;
       drawImageCover(ctx, imgA, cw, ch);
     } else {
-      // Frame not ready — load it and draw when available
+      // Frame not ready — fallback load
       const fallback = new Image();
       fallback.onload = () => {
         imagesRef.current.set(idxA, fallback);
@@ -180,7 +181,7 @@ const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref
       fallback.src = getFrameUrl(idxA);
       imagesRef.current.set(idxA, fallback);
     }
-  }, [preloadAround, drawImageCover]);
+  }, [drawImageCover]);
 
   useImperativeHandle(ref, () => ({
     setFrame: (frame: number) => {
