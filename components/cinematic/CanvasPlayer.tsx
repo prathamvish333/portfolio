@@ -1,7 +1,12 @@
 'use client';
 
-import React, { useEffect, useRef, useImperativeHandle, forwardRef, useCallback } from 'react';
+import React, { useEffect, useRef, useImperativeHandle, forwardRef, useCallback, useState } from 'react';
 import { getFrameUrl } from '../../utils/frame-loader';
+
+const TOTAL_FRAMES = 1260;
+const INITIAL_PRELOAD = 120;   // First batch loaded before hiding loader
+const PRELOAD_AHEAD = 100;     // Frames to preload ahead of scroll position
+const PRELOAD_BEHIND = 20;     // Frames to keep behind scroll position
 
 export interface CanvasPlayerHandle {
   setFrame: (frame: number) => void;
@@ -11,6 +16,9 @@ const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<Map<number, HTMLImageElement>>(new Map());
   const lastDrawnFrame = useRef(-1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadProgress, setLoadProgress] = useState(0);
+  const loadingRef = useRef(true);
 
   // Handle resize
   useEffect(() => {
@@ -19,7 +27,6 @@ const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref
         const dpr = window.devicePixelRatio || 1;
         canvasRef.current.width = window.innerWidth * dpr;
         canvasRef.current.height = window.innerHeight * dpr;
-        // Redraw after resize
         if (lastDrawnFrame.current >= 0) {
           drawFrame(lastDrawnFrame.current);
         }
@@ -30,23 +37,89 @@ const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Preload a batch of frames around current position
-  const preloadAround = useCallback((idx: number) => {
-    const PRELOAD_AHEAD = 40;
+  // Load a single frame, return promise
+  const loadImage = useCallback((idx: number): Promise<HTMLImageElement> => {
     const cache = imagesRef.current;
-    for (let i = Math.max(0, idx - 5); i < Math.min(1260, idx + PRELOAD_AHEAD); i++) {
+    const existing = cache.get(idx);
+    if (existing && existing.complete && existing.naturalWidth !== 0) {
+      return Promise.resolve(existing);
+    }
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        cache.set(idx, img);
+        resolve(img);
+      };
+      img.onerror = () => resolve(img); // Don't block on errors
+      img.src = getFrameUrl(idx);
+      cache.set(idx, img);
+    });
+  }, []);
+
+  // Aggressive initial preload — load first INITIAL_PRELOAD frames with progress
+  useEffect(() => {
+    let mounted = true;
+
+    const preloadInitial = async () => {
+      const BATCH_SIZE = 20; // Load in parallel batches of 20
+      let loaded = 0;
+
+      for (let start = 0; start < INITIAL_PRELOAD; start += BATCH_SIZE) {
+        const end = Math.min(start + BATCH_SIZE, INITIAL_PRELOAD);
+        const batch = [];
+        for (let i = start; i < end; i++) {
+          batch.push(loadImage(i));
+        }
+        await Promise.all(batch);
+        loaded += (end - start);
+        if (mounted) {
+          setLoadProgress(Math.round((loaded / INITIAL_PRELOAD) * 100));
+        }
+      }
+
+      if (mounted) {
+        loadingRef.current = false;
+        setIsLoading(false);
+        // Continue preloading remaining frames in the background
+        preloadRemaining();
+      }
+    };
+
+    const preloadRemaining = () => {
+      // Lazily preload remaining frames in small batches
+      let idx = INITIAL_PRELOAD;
+      const loadNext = () => {
+        if (!mounted || idx >= TOTAL_FRAMES) return;
+        const batch = [];
+        const end = Math.min(idx + 10, TOTAL_FRAMES);
+        for (let i = idx; i < end; i++) {
+          batch.push(loadImage(i));
+        }
+        idx = end;
+        Promise.all(batch).then(() => {
+          // Use requestIdleCallback if available, else setTimeout
+          if ('requestIdleCallback' in window) {
+            (window as any).requestIdleCallback(loadNext);
+          } else {
+            setTimeout(loadNext, 50);
+          }
+        });
+      };
+      loadNext();
+    };
+
+    preloadInitial();
+    return () => { mounted = false; };
+  }, [loadImage]);
+
+  // Preload frames around scroll position (called on every scroll frame)
+  const preloadAround = useCallback((idx: number) => {
+    const cache = imagesRef.current;
+    for (let i = Math.max(0, idx - PRELOAD_BEHIND); i < Math.min(TOTAL_FRAMES, idx + PRELOAD_AHEAD); i++) {
       if (!cache.has(i)) {
         const img = new Image();
         img.src = getFrameUrl(i);
         cache.set(i, img);
-      }
-    }
-    // GC: trim cache when too large
-    if (cache.size > 200) {
-      for (const key of cache.keys()) {
-        if (key < idx - 60 || key > idx + 120) {
-          cache.delete(key);
-        }
       }
     }
   }, []);
@@ -69,14 +142,13 @@ const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref
     const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) return;
 
-    // Round to 2 decimal places to avoid excessive redraws
     const rounded = Math.round(frameFloat * 100) / 100;
     if (rounded === lastDrawnFrame.current) return;
     lastDrawnFrame.current = rounded;
 
     const idxA = Math.floor(frameFloat);
-    const idxB = Math.min(idxA + 1, 1259); // next frame, clamped
-    const blend = frameFloat - idxA; // 0.0 to 0.99..
+    const idxB = Math.min(idxA + 1, TOTAL_FRAMES - 1);
+    const blend = frameFloat - idxA;
 
     // Preload in background
     preloadAround(idxA);
@@ -87,18 +159,16 @@ const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref
     const ch = canvas.height;
 
     if (isReady(imgA) && isReady(imgB) && blend > 0.01) {
-      // Sub-frame blending: draw frame A, then overlay frame B with blend alpha
       ctx.globalAlpha = 1;
       drawImageCover(ctx, imgA, cw, ch);
       ctx.globalAlpha = blend;
       drawImageCover(ctx, imgB, cw, ch);
       ctx.globalAlpha = 1;
     } else if (isReady(imgA)) {
-      // Snap to frame A (blend is ~0 or B isn't loaded yet)
       ctx.globalAlpha = 1;
       drawImageCover(ctx, imgA, cw, ch);
     } else {
-      // Not cached — load and draw when ready
+      // Frame not ready — load it and draw when available
       const fallback = new Image();
       fallback.onload = () => {
         imagesRef.current.set(idxA, fallback);
@@ -112,24 +182,36 @@ const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref
     }
   }, [preloadAround, drawImageCover]);
 
-  // Expose imperative API — no React state, no re-renders
   useImperativeHandle(ref, () => ({
     setFrame: (frame: number) => {
       drawFrame(frame);
     },
   }), [drawFrame]);
 
-  // Preload first batch on mount
-  useEffect(() => {
-    preloadAround(0);
-  }, [preloadAround]);
-
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full z-0 pointer-events-none"
-      style={{ imageRendering: 'auto' }}
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full z-0 pointer-events-none"
+        style={{ imageRendering: 'auto' }}
+      />
+      {isLoading && (
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black">
+          <div className="text-white/60 text-sm font-mono tracking-widest uppercase mb-4">
+            Initializing Sequence
+          </div>
+          <div className="w-64 h-1 bg-white/10 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-white/80 rounded-full transition-all duration-300 ease-out"
+              style={{ width: `${loadProgress}%` }}
+            />
+          </div>
+          <div className="text-white/40 text-xs font-mono mt-2">
+            {loadProgress}%
+          </div>
+        </div>
+      )}
+    </>
   );
 });
 
