@@ -2,13 +2,13 @@
 
 import React, { useImperativeHandle, forwardRef, useRef } from 'react';
 import { useTarsStore } from '../../store/useTarsStore';
-import { ShieldCheck, Download, Mail, Zap, Terminal, Database, Cloud, Network, Orbit, ChevronDown } from 'lucide-react';
+import { Download, Terminal } from 'lucide-react';
+import Link from 'next/link';
 
 export interface CinematicOverlayHandle {
   setProgress: (p: number) => void;
 }
 
-// Math helpers to perfectly sync scroll `progress` to visual frames
 const mapP = (val: number, inM: number, inX: number, outM: number, outX: number) => {
   if (val <= inM) return outM;
   if (val >= inX) return outX;
@@ -22,67 +22,90 @@ const getOpacity = (p: number, sIn: number, eIn: number, sOut: number, eOut: num
   return 1;
 };
 
-// Universal Glass Panel CSS for top-left lighting
-const GLASS_PANEL = "bg-[#050505]/60 backdrop-blur-md border border-[#ffffff]/10 shadow-[-1px_-1px_0_rgba(255,255,255,0.05),_5px_5px_20px_rgba(0,0,0,0.8)] rounded-xl";
-
 const CinematicOverlay = forwardRef<CinematicOverlayHandle>(function CinematicOverlay(_, ref) {
   const { setRecruiterMode } = useTarsStore();
 
-  const s1Ref = useRef<HTMLDivElement>(null);
-  const s2Ref = useRef<HTMLDivElement>(null);
-  const s3Ref = useRef<HTMLDivElement>(null);
-  const s4Ref = useRef<HTMLDivElement>(null);
-  const s5Ref = useRef<HTMLDivElement>(null);
-  const s6Ref = useRef<HTMLDivElement>(null);
+  const s0Ref = useRef<HTMLDivElement>(null); // SYSTEM ONLINE
+  const s1Ref = useRef<HTMLDivElement>(null); // Systems evolve
+  const s2Ref = useRef<HTMLDivElement>(null); // Identity
+  const s3Ref = useRef<HTMLDivElement>(null); // Experience (Jio)
+  const s4Ref = useRef<HTMLDivElement>(null); // Capability
+  const s5Ref = useRef<HTMLDivElement>(null); // Impact Statement 2
+  const s6Ref = useRef<HTMLDivElement>(null); // Project 1
+  const s7Ref = useRef<HTMLDivElement>(null); // Project 2
+  const s8Ref = useRef<HTMLDivElement>(null); // CTA
 
   useImperativeHandle(ref, () => ({
     setProgress: (p: number) => {
-      // Scene 1: INITIALIZING (0.00 - 0.12) - slightly slower/longer for immersion
-      if (s1Ref.current) {
-        const op = getOpacity(p, 0, 0.03, 0.10, 0.12);
-        s1Ref.current.style.opacity = op.toString();
-        s1Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
-        s1Ref.current.style.transform = `translateY(${mapP(p, 0, 0.12, 5, 0)}px)`;
-      }
-      
-      // Scene 2: IDENTITY (0.15 - 0.25)
-      if (s2Ref.current) {
-        const op = getOpacity(p, 0.18, 0.20, 0.24, 0.25); // Delayed by 0.03
-        s2Ref.current.style.opacity = op.toString();
-        s2Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
-        s2Ref.current.style.transform = `translateY(${mapP(p, 0.15, 0.25, 5, 0)}px)`;
-      }
-      
-      // Scene 3: EXPERIENCE (0.30 - 0.45)
-      if (s3Ref.current) {
-        const op = getOpacity(p, 0.33, 0.35, 0.44, 0.45); // Delayed by 0.03
-        s3Ref.current.style.opacity = op.toString();
-        s3Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
-        s3Ref.current.style.transform = `translateY(${mapP(p, 0.30, 0.45, 5, 0)}px)`;
-      }
-      
-      // Scene 4: CAPABILITIES (0.50 - 0.65)
-      if (s4Ref.current) {
-        const op = getOpacity(p, 0.53, 0.55, 0.64, 0.65); // Delayed by 0.03
-        s4Ref.current.style.opacity = op.toString();
-        s4Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
-        s4Ref.current.style.transform = `translateY(${mapP(p, 0.50, 0.65, 5, 0)}px)`;
-      }
-      
-      // Scene 5: SYSTEM MODULES (0.70 - 0.85)
-      if (s5Ref.current) {
-        const op = getOpacity(p, 0.73, 0.75, 0.84, 0.85); // Delayed by 0.03
-        s5Ref.current.style.opacity = op.toString();
-        s5Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
-        s5Ref.current.style.transform = `translateY(${mapP(p, 0.70, 0.85, 5, 0)}px)`;
+      // HOOK (0.00 - 0.08) - Aggressive overlap with S1
+      if (s0Ref.current) {
+        const op = getOpacity(p, 0.00, 0.01, 0.06, 0.08);
+        s0Ref.current.style.opacity = op.toString();
+        s0Ref.current.style.transform = `scale(${mapP(p, 0, 0.08, 0.95, 1.05)})`;
       }
 
-      // Scene 6: FINAL CTA (0.90 - 1.00)
+      // BLACK HOLE IMPACT (0.04 - 0.22) - Massive overlap with S0 and S2
+      if (s1Ref.current) {
+        const op = getOpacity(p, 0.04, 0.10, 0.18, 0.22);
+        s1Ref.current.style.opacity = op.toString();
+        s1Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
+        s1Ref.current.style.transform = `scale(${mapP(p, 0.04, 0.22, 0.95, 1)})`;
+      }
+      
+      // IDENTITY (0.16 - 0.38) - Overlapping S1 and S3
+      if (s2Ref.current) {
+        const op = getOpacity(p, 0.16, 0.22, 0.32, 0.38);
+        s2Ref.current.style.opacity = op.toString();
+        s2Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
+        s2Ref.current.style.transform = `scale(${mapP(p, 0.16, 0.38, 0.95, 1)})`;
+      }
+      
+      // EXPERIENCE (0.30 - 0.52) - Overlapping S2 and S4
+      if (s3Ref.current) {
+        const op = getOpacity(p, 0.30, 0.36, 0.46, 0.52);
+        s3Ref.current.style.opacity = op.toString();
+        s3Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
+        s3Ref.current.style.transform = `scale(${mapP(p, 0.30, 0.52, 0.95, 1)})`;
+      }
+      
+      // CAPABILITY (0.44 - 0.68) - Overlapping S3 and S5
+      if (s4Ref.current) {
+        const op = getOpacity(p, 0.44, 0.50, 0.62, 0.68);
+        s4Ref.current.style.opacity = op.toString();
+        s4Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
+        s4Ref.current.style.transform = `scale(${mapP(p, 0.44, 0.68, 0.95, 1)})`;
+      }
+      
+      // IMPACT STATEMENT (0.60 - 0.75) - Overlapping S4 and S6
+      if (s5Ref.current) {
+        const op = getOpacity(p, 0.60, 0.64, 0.70, 0.75);
+        s5Ref.current.style.opacity = op.toString();
+        s5Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
+        s5Ref.current.style.transform = `scale(${mapP(p, 0.60, 0.75, 0.95, 1)})`;
+      }
+
+      // PROJECT 1: NOTES-STUDIO (0.70 - 0.86)
       if (s6Ref.current) {
-        const op = getOpacity(p, 0.92, 0.94, 1, 1);
+        const op = getOpacity(p, 0.70, 0.74, 0.81, 0.86);
         s6Ref.current.style.opacity = op.toString();
         s6Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
-        s6Ref.current.style.transform = `translateY(${mapP(p, 0.90, 1, 5, 0)}px)`;
+        s6Ref.current.style.transform = `scale(${mapP(p, 0.70, 0.86, 0.95, 1)})`;
+      }
+
+      // PROJECT 2: YASHASVI DUNIYA (0.83 - 0.95)
+      if (s7Ref.current) {
+        const op = getOpacity(p, 0.83, 0.87, 0.92, 0.95);
+        s7Ref.current.style.opacity = op.toString();
+        s7Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
+        s7Ref.current.style.transform = `scale(${mapP(p, 0.83, 0.95, 0.95, 1)})`;
+      }
+
+      // FINAL CTA (0.92 - 1.0)
+      if (s8Ref.current) {
+        const op = getOpacity(p, 0.92, 0.95, 1, 1);
+        s8Ref.current.style.opacity = op.toString();
+        s8Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
+        s8Ref.current.style.transform = `scale(${mapP(p, 0.92, 1, 0.98, 1)})`;
       }
     },
   }), []);
@@ -90,258 +113,164 @@ const CinematicOverlay = forwardRef<CinematicOverlayHandle>(function CinematicOv
   return (
     <div className="fixed inset-0 z-10 pointer-events-none flex items-center justify-center font-sans tracking-tight">
       
-      {/* SCENE 1: SYSTEM INITIALIZING */}
-      <div 
-        ref={s1Ref}
-        className="absolute text-center p-10 pointer-events-auto flex flex-col items-center justify-center"
-        style={{ opacity: 0 }}
-      >
-        <div className="flex justify-center gap-6 mb-8 uppercase text-xs tracking-[0.3em] font-medium text-gray-500 drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">
-            <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse drop-shadow-[0_0_8px_rgba(34,197,94,0.8)]"/> SYSTEM INITIALIZING...</span>
-        </div>
-        <div className="w-64 h-1 bg-white/10 rounded-full overflow-hidden mt-4">
-          <div className="h-full bg-white/50 w-full animate-pulse rounded-full" />
-        </div>
-        <button 
-            onClick={() => window.scrollTo({ top: window.innerHeight * 2, behavior: 'smooth' })}
-            className="absolute bottom-[-100px] flex flex-col items-center opacity-70 animate-bounce hover:opacity-100 transition-opacity cursor-pointer group"
-        >
-            <span className="text-[10px] tracking-widest text-white group-hover:text-[#fbbf24] mb-2 uppercase font-black tracking-[0.4em] drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">INITIATE</span>
-            <ChevronDown size={24} className="text-white group-hover:text-[#fbbf24] drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"/>
-        </button>
+      {/* SCENE 0: INIT FLASH */}
+      <div ref={s0Ref} className="absolute z-[9001] pointer-events-none flex items-center justify-center" style={{ opacity: 0 }}>
+        <h1 className="text-2xl md:text-4xl font-black uppercase tracking-[0.5em] text-white/50 blur-[1px]">SYSTEM ONLINE</h1>
+      </div>
+
+      {/* SCENE 1: THE BLACK HOLE MOMENT */}
+      <div ref={s1Ref} className="absolute z-[9001] pointer-events-auto text-center px-6" style={{ opacity: 0 }}>
+        <h2 className="text-4xl md:text-5xl lg:text-7xl font-serif italic text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.4)] leading-tight">
+          "Systems are not built. <br/><span className="text-[#fbbf24]">They evolve.</span>"
+        </h2>
       </div>
 
       {/* SCENE 2: IDENTITY */}
-      <div 
-        ref={s2Ref}
-        className="absolute text-center p-10 max-w-5xl pointer-events-auto"
-        style={{ opacity: 0 }}
-      >
-        <div className="flex justify-center gap-6 mb-8 uppercase text-xs tracking-[0.3em] font-medium text-gray-500">
-            <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse drop-shadow-[0_0_8px_rgba(34,197,94,0.8)]"/> NODE: PORTFOLIO_SYSTEM_V1</span>
-            <span className="border-l border-white/10 pl-6 text-[#fbbf24] drop-shadow-[0_0_8px_rgba(251,191,36,0.3)]">STATUS: ACTIVE</span>
-        </div>
-
-        <h1 className="text-7xl md:text-9xl lg:text-[10rem] font-black uppercase tracking-tighter text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.25)] leading-[0.8] mb-6">
+      <div ref={s2Ref} className="absolute z-[9001] text-center p-10 max-w-7xl pointer-events-auto" style={{ opacity: 0 }}>
+        <h1 className="text-8xl md:text-9xl lg:text-[12rem] font-black uppercase tracking-tighter text-white drop-shadow-[0_0_50px_rgba(255,255,255,0.15)] leading-[0.8] mb-8 font-heading">
           PRATHAM
         </h1>
-        <h2 className="text-3xl md:text-5xl font-medium uppercase tracking-[0.4em] text-white/90 drop-shadow-[0_0_20px_rgba(255,255,255,0.15)] mb-10">
-          SYSTEMS ENGINEER
-        </h2>
-        <div className="flex items-center justify-center gap-3 opacity-80">
-            <Orbit size={18} className="text-[#fbbf24] drop-shadow-[0_0_8px_rgba(251,191,36,0.4)]" />
-            <p className="text-sm md:text-base text-gray-300 tracking-[0.5em] uppercase font-light drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">
-              Designing systems that operate at scale.
-            </p>
+        <div className="flex flex-col items-center gap-6">
+          <div className="h-[1px] w-24 bg-white/20" />
+          <h2 className="text-2xl md:text-3xl font-bold uppercase tracking-[0.4em] text-white/80 font-heading">
+            BACKEND & DEVOPS ENGINEER
+          </h2>
+          <p className="system-label">BUILDING SCALABLE SYSTEMS & AUTOMATION WORKFLOWS</p>
         </div>
       </div>
 
-      {/* SCENE 3: EXPERIENCE */}
-      <div 
-        ref={s3Ref}
-        className="absolute left-[8%] top-[50%] -translate-y-1/2 w-full max-w-2xl pointer-events-auto"
-        style={{ opacity: 0 }}
-      >
-          <div className={`p-10 border-l-[4px] border-l-[#fbbf24] ${GLASS_PANEL}`}>
-            <div className="flex items-center gap-3 mb-8 opacity-80">
-              <Zap size={16} className="text-[#fbbf24] drop-shadow-[0_0_8px_rgba(251,191,36,0.4)]" />
-              <h2 className="text-xs text-gray-400 uppercase tracking-[0.3em] font-bold">MISSION LOG // 02</h2>
-            </div>
-            
-            <div className="mb-8">
-              <p className="text-[10px] tracking-[0.4em] text-gray-500 mb-2 uppercase font-medium">DEPLOYMENT NODE:</p>
-              <h3 className="text-5xl md:text-6xl font-black uppercase tracking-tighter text-white leading-none drop-shadow-[0_0_20px_rgba(255,255,255,0.15)]">
-                JIO PLATFORMS
-              </h3>
-            </div>
-
-            <div className="mb-10">
-              <p className="text-[10px] tracking-[0.4em] text-gray-500 mb-2 uppercase font-medium">ROLE:</p>
-              <h4 className="text-xl md:text-2xl font-medium tracking-[0.3em] text-[#fbbf24] uppercase drop-shadow-[0_0_15px_rgba(251,191,36,0.2)]">
-                SYSTEM ENGINEER <span className="text-sm border border-green-500/30 text-green-500 px-3 py-1 ml-3 rounded font-mono drop-shadow-[0_0_8px_rgba(34,197,94,0.4)]">ACTIVE</span>
-              </h4>
-            </div>
-            
-            <ul className="space-y-5 text-sm text-gray-200 font-light tracking-wide leading-relaxed font-mono drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">
-              <li className="flex gap-4 items-start">
-                <span className="text-[#fbbf24]">{">"}</span>
-                <p>Built robust Python-based automation for hybrid cloud infrastructure, reducing manual provisioning time by over 40%.</p>
-              </li>
-              <li className="flex gap-4 items-start">
-                <span className="text-[#fbbf24]">{">"}</span>
-                <p>Developed core backend components for CloudXP engine using async Python patterns to handle scale.</p>
-              </li>
-              <li className="flex gap-4 items-start">
-                <span className="text-[#fbbf24]">{">"}</span>
-                <p>Managing multi-region Kubernetes clusters for production resiliency and automated scaling.</p>
-              </li>
-            </ul>
+      {/* SCENE 3: EXPERIENCE (IMPACT -> TECH) */}
+      <div ref={s3Ref} className="absolute z-[9001] flex flex-col items-center justify-center text-center px-10 pointer-events-auto" style={{ opacity: 0 }}>
+        <h3 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.1)] mb-16 max-w-6xl font-heading">
+          SCALABILITY IS NOT A <span className="text-white/40">FEATURE.</span>
+        </h3>
+        
+        <div className="flex flex-col items-center gap-6">
+          <p className="system-label">NODE: JIO PLATFORMS // SDE-I</p>
+          <div className="cinematic-line w-64" />
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-[10px] font-mono text-gray-400 uppercase tracking-widest">
+            {['PYTHON', 'KUBERNETES', 'CI/CD', 'HYBRID CLOUD'].map(tech => (
+              <span key={tech} className="hover:text-white transition-colors">{tech}</span>
+            ))}
           </div>
+        </div>
       </div>
 
       {/* SCENE 4: CAPABILITIES */}
-      <div 
-        ref={s4Ref}
-        className="absolute w-full max-w-7xl px-10 pointer-events-auto"
-        style={{ opacity: 0 }}
-      >
-        <div className="text-center mb-16 relative">
-          <h2 className="text-xs text-[#fbbf24] uppercase tracking-[0.5em] mb-4 font-bold opacity-90 drop-shadow-[0_0_8px_rgba(251,191,36,0.3)]">READOUT // 03</h2>
-          <h3 className="text-5xl md:text-7xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.15)]">SYSTEM CAPABILITIES</h3>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className={`p-8 ${GLASS_PANEL} hover:border-[#fbbf24]/50 transition-colors group`}>
-            <div className="flex justify-between items-start mb-10">
-              <Cloud size={24} className="text-gray-400 group-hover:text-white transition-colors" />
-              <span className="text-[10px] font-mono text-gray-500 group-hover:text-white/50">[ NODE_01 ]</span>
+      <div ref={s4Ref} className="absolute z-[9001] w-full max-w-7xl px-10 flex flex-col items-center pointer-events-auto text-center" style={{ opacity: 0 }}>
+        <h3 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.1)] mb-20 break-words font-heading">
+          SYSTEMS REMAIN <span className="text-white/40">STABLE</span> UNDER LOAD.
+        </h3>
+        
+        <div className="grid md:grid-cols-3 gap-12 w-full max-w-5xl">
+          {[
+            { label: 'INFRASTRUCTURE', techs: 'Docker • Terraform • AWS' },
+            { label: 'CORE ENGINE', techs: 'FastAPI • PostgreSQL • Redis' },
+            { label: 'AUTOMATION', techs: 'Jenkins • Prometheus • Grafana' }
+          ].map((item, idx) => (
+            <div key={idx} className="flex flex-col items-center space-y-4">
+              <p className="system-label text-white/40">{item.label}</p>
+              <div className="h-[1px] w-12 bg-white/10" />
+              <p className="text-sm font-mono text-white/80 tracking-tight">{item.techs}</p>
             </div>
-            <h4 className="text-base text-white font-bold uppercase tracking-[0.3em] mb-6 drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">INFRASTRUCTURE</h4>
-            <div className="flex flex-col gap-3 font-mono text-sm text-gray-300">
-              {['KUBERNETES', 'DOCKER', 'TERRAFORM', 'AWS'].map(s => (
-                <div key={s} className="flex justify-between border-b border-white/5 pb-2">
-                    <span>{s}</span><span className="text-white/30 text-xs mt-0.5">OK</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className={`p-8 ${GLASS_PANEL} border-[#fbbf24]/30 shadow-[0_0_30px_rgba(251,191,36,0.05)] hover:border-[#fbbf24]/70 hover:shadow-[0_0_40px_rgba(251,191,36,0.15)] transition-all group`}>
-            <div className="flex justify-between items-start mb-10">
-              <Database size={24} className="text-[#fbbf24] drop-shadow-[0_0_10px_rgba(251,191,36,0.4)]" />
-              <span className="text-[10px] font-mono text-[#fbbf24]">[ NODE_02 ]</span>
-            </div>
-            <h4 className="text-base text-[#fbbf24] font-bold uppercase tracking-[0.3em] mb-6 drop-shadow-[0_0_10px_rgba(251,191,36,0.2)]">CORE ENGINE</h4>
-            <div className="flex flex-col gap-3 font-mono text-sm text-gray-100">
-              {['PYTHON', 'FASTAPI', 'TYPESCRIPT', 'POSTGRESQL', 'REDIS'].map(s => (
-                <div key={s} className="flex justify-between border-b border-white/5 pb-2">
-                    <span>{s}</span><span className="text-[#fbbf24] text-xs mt-0.5 animate-pulse">SYNCED</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className={`p-8 ${GLASS_PANEL} hover:border-[#fbbf24]/50 transition-colors group`}>
-            <div className="flex justify-between items-start mb-10">
-              <Network size={24} className="text-gray-400 group-hover:text-white transition-colors" />
-              <span className="text-[10px] font-mono text-gray-500 group-hover:text-white/50">[ NODE_03 ]</span>
-            </div>
-            <h4 className="text-base text-white font-bold uppercase tracking-[0.3em] mb-6 drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">AUTOMATION</h4>
-            <div className="flex flex-col gap-3 font-mono text-sm text-gray-300">
-              {['CI/CD PIPELINES', 'JENKINS', 'PROMETHEUS', 'GRAFANA'].map(s => (
-                <div key={s} className="flex justify-between border-b border-white/5 pb-2">
-                    <span>{s}</span><span className="text-white/30 text-xs mt-0.5">OK</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* SCENE 5: SYSTEM MODULES */}
-      <div 
-        ref={s5Ref}
-        className="absolute w-full max-w-7xl px-10 pointer-events-auto"
-        style={{ opacity: 0 }}
-      >
-        <div className="text-center mb-16 relative">
-          <h2 className="text-xs text-gray-400 uppercase tracking-[0.5em] mb-4 font-bold opacity-90">ARCHIVE // 04</h2>
-          <h3 className="text-5xl md:text-7xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.15)]">SYSTEM MODULES</h3>
+      {/* SCENE 5: IMPACT STATEMENT */}
+      <div ref={s5Ref} className="absolute z-[9001] pointer-events-auto text-center px-6" style={{ opacity: 0 }}>
+        <h2 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+          ARCHITECTURAL INTEGRITY.
+        </h2>
+      </div>
+
+      {/* SCENE 6: PROJECT 1 (NOTES-STUDIO) */}
+      <div ref={s6Ref} className="absolute z-[9001] w-full max-w-6xl px-10 flex flex-col items-center pointer-events-auto text-center" style={{ opacity: 0 }}>
+        <div className="space-y-6 mb-12">
+          <p className="system-label">ARCHIVE_01 // CLOUD-NATIVE ECOSYSTEM</p>
+          <div className="cinematic-line w-32 mx-auto" />
+          <h3 className="text-7xl md:text-9xl font-black uppercase tracking-tight text-white font-heading">NOTES-STUDIO</h3>
+          <p className="text-lg text-gray-400 font-light max-w-3xl leading-relaxed mx-auto">
+            Full-scale Kubernetes deployment featuring <span className="text-white">FastAPI</span>, <span className="text-white">PostgreSQL</span>, and <span className="text-white">AI Agents</span>.
+          </p>
         </div>
         
-        <div className="grid md:grid-cols-2 gap-10">
-            <div className={`p-10 ${GLASS_PANEL} relative hover:bg-black/80 hover:border-white/30 transition-all duration-500 group`}>
-              <div className="mb-8">
-                  <p className="text-[10px] tracking-[0.4em] text-gray-500 mb-2 uppercase font-medium">MODULE:</p>
-                  <h4 className="text-3xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">NOTES-STUDIO</h4>
-              </div>
-              <div className="flex justify-between items-center mb-8 pb-8 border-b border-white/10">
-                  <div>
-                    <p className="text-[10px] tracking-[0.4em] text-gray-500 mb-1 uppercase font-medium">TYPE:</p>
-                    <p className="text-xs tracking-[0.2em] text-[#fbbf24] uppercase drop-shadow-[0_0_10px_rgba(251,191,36,0.2)]">BACKEND SERVICE</p>
-                  </div>
-                  <Terminal size={28} className="text-white/20 group-hover:text-white/50 transition-colors" />
-              </div>
-              <p className="text-base text-gray-300 font-light mb-8 pr-10 leading-relaxed drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">Full-scale Kubernetes deployment feat. FastAPI, Postgres, and real-time AI Agents with Jenkins CI/CD.</p>
-              <div className="bg-black/60 border border-white/10 p-5 rounded font-mono text-[11px] text-blue-400 flex flex-wrap gap-2 items-center justify-between shadow-inner">
-                  <span className="font-bold">CLIENT</span> <span className="text-white/30">→</span> 
-                  <span className="font-bold">API</span> <span className="text-white/30">→</span> 
-                  <span className="font-bold">AUTH</span> <span className="text-white/30">→</span> 
-                  <span className="font-bold">DB</span> <span className="text-white/30">→</span> 
-                  <span className="font-bold text-green-400">DEPLOY</span>
-              </div>
-            </div>
+        <div className="flex flex-wrap justify-center gap-3 mb-16">
+          {['K8S_ORCHESTRATION', 'FASTAPI_ENGINE', 'POSTGRES_DB', 'JENKINS_CI'].map(tech => (
+            <span key={tech} className="px-3 py-1 border border-white/10 text-[9px] font-mono text-white/40 tracking-widest bg-white/[0.02]">{tech}</span>
+          ))}
+        </div>
 
-            <div className={`p-10 ${GLASS_PANEL} relative hover:bg-black/80 hover:border-white/30 transition-all duration-500 group`}>
-              <div className="mb-8">
-                  <p className="text-[10px] tracking-[0.4em] text-gray-500 mb-2 uppercase font-medium">MODULE:</p>
-                  <h4 className="text-3xl font-black uppercase tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">YASHASVI DUNIYA</h4>
-              </div>
-              <div className="flex justify-between items-center mb-8 pb-8 border-b border-white/10">
-                  <div>
-                    <p className="text-[10px] tracking-[0.4em] text-gray-500 mb-1 uppercase font-medium">TYPE:</p>
-                    <p className="text-xs tracking-[0.2em] text-[#fbbf24] uppercase drop-shadow-[0_0_10px_rgba(251,191,36,0.2)]">PRODUCTION PORTAL</p>
-                  </div>
-                  <Network size={28} className="text-white/20 group-hover:text-white/50 transition-colors" />
-              </div>
-              <p className="text-base text-gray-300 font-light mb-8 pr-10 leading-relaxed drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">High-fidelity news platform serving critical traffic loads with advanced caching, CMS integrations, and real-time news tickers.</p>
-              <div className="bg-black/60 border border-white/10 p-5 rounded font-mono text-[11px] text-orange-400 flex flex-wrap gap-2 items-center justify-between shadow-inner">
-                  <span className="font-bold">USER</span> <span className="text-white/30">→</span> 
-                  <span className="font-bold">EDGE_CACHE</span> <span className="text-white/30">→</span> 
-                  <span className="font-bold">CMS_ENGINE</span> <span className="text-white/30">→</span> 
-                  <span className="font-bold text-green-400">RENDER</span>
-              </div>
-            </div>
+        <div className="flex gap-8">
+          <Link href={process.env.NEXT_PUBLIC_NOTES_URL || "http://localhost:3001"} target="_blank" className="px-10 py-4 bg-white text-black font-black uppercase text-[10px] tracking-widest hover:bg-white/90 transition-all">
+            LIVE_DEMO
+          </Link>
+          <Link href="https://github.com/prathamvish333/Notes-Studio" target="_blank" className="px-10 py-4 border border-white/20 text-white font-black uppercase text-[10px] tracking-widest hover:border-white transition-all">
+            REPOSITORY
+          </Link>
         </div>
       </div>
 
-      {/* SCENE 6: FINAL CTA */}
-      <div 
-        ref={s6Ref}
-        className="absolute w-full max-w-5xl px-10 pointer-events-auto"
-        style={{ opacity: 0 }}
-      >
-        <div className={`w-full ${GLASS_PANEL} px-10 py-14 flex flex-col md:flex-row items-center justify-between gap-10 bg-[#fbbf24]/10 border-[#fbbf24]/30 shadow-[0_0_40px_rgba(251,191,36,0.15)]`}>
-            <div>
-              <h4 className="text-2xl md:text-5xl font-black uppercase text-white tracking-[0.2em] mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">SYSTEM READY</h4>
-              <p className="text-sm text-[#fbbf24] uppercase tracking-widest font-mono drop-shadow-[0_0_8px_rgba(251,191,36,0.3)]">Select operational action to proceed.</p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-              <a 
-                href="/Prathams_Resume.pdf" download
-                className="flex items-center justify-center gap-3 px-8 py-5 bg-[#fbbf24] text-black font-bold uppercase text-xs tracking-[0.2em] hover:bg-white transition-colors rounded shadow-[0_0_15px_rgba(251,191,36,0.4)] hover:shadow-[0_0_20px_rgba(255,255,255,0.6)] w-full md:w-auto whitespace-nowrap"
-              >
-                <Download size={16} className="mb-0.5" />
-                VIEW FULL PROFILE
-              </a>
-              <button 
-                onClick={() => setRecruiterMode(true)}
-                className="flex items-center justify-center gap-3 px-8 py-5 border-2 border-[#fbbf24] text-[#fbbf24] font-bold uppercase text-xs tracking-[0.2em] hover:bg-[#fbbf24] hover:text-black transition-all rounded w-full md:w-auto whitespace-nowrap"
-              >
-                <Terminal size={16} className="mb-0.5" />
-                ENTER RECRUITER MODE
-              </button>
-            </div>
+      {/* SCENE 7: PROJECT 2 (YASHASVI DUNIYA) */}
+      <div ref={s7Ref} className="absolute z-[9001] w-full max-w-6xl px-10 flex flex-col items-center pointer-events-auto text-center" style={{ opacity: 0 }}>
+        <div className="space-y-6 mb-12">
+          <p className="system-label">ARCHIVE_02 // HIGH-TRAFFIC PORTAL</p>
+          <div className="cinematic-line w-32 mx-auto" />
+          <h3 className="text-7xl md:text-9xl font-black uppercase tracking-tight text-white font-heading">YASHASVI DUNIYA</h3>
+          <p className="text-lg text-gray-400 font-light max-w-3xl leading-relaxed mx-auto">
+            Production news platform serving critical traffic loads with <span className="text-white">Edge Caching</span> and <span className="text-white">Redis</span> optimization.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-3 mb-16">
+          {['REDIS_OPTIMIZATION', 'EDGE_CACHING', 'CMS_SCALING', 'NEWS_ALGO'].map(tech => (
+            <span key={tech} className="px-3 py-1 border border-white/10 text-[9px] font-mono text-white/40 tracking-widest bg-white/[0.02]">{tech}</span>
+          ))}
+        </div>
+        
+        <div className="flex gap-8">
+          <Link href="https://yashasviduniya.com" target="_blank" className="px-10 py-4 bg-white text-black font-black uppercase text-[10px] tracking-widest hover:bg-white/90 transition-all">
+            LIVE_DEMO
+          </Link>
+          <button disabled className="px-10 py-4 border border-white/20 text-white/30 font-black uppercase text-[10px] tracking-widest cursor-not-allowed">
+            PRIVATE_ARC
+          </button>
         </div>
       </div>
 
-      {/* Global Status HUD */}
-      <div className="fixed top-10 left-10 z-[8000] pointer-events-none opacity-60 flex flex-col gap-2 font-mono drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
-          <div className="flex gap-4 items-center">
-            <div className="w-2 h-2 bg-[#fbbf24] rounded-sm animate-pulse drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
-            <span className="text-[10px] text-white tracking-[0.4em] uppercase font-bold">SYSTEMS_NOMINAL</span>
-          </div>
+      {/* SCENE 8: FINAL CTA */}
+      <div ref={s8Ref} className="absolute z-[9001] w-full max-w-5xl px-10 pointer-events-auto flex flex-col items-center" style={{ opacity: 0 }}>
+        <h4 className="text-5xl md:text-7xl font-black uppercase text-white tracking-[0.1em] mb-4 font-heading">SYSTEM READY</h4>
+        <p className="system-label mb-16">SELECT OPERATIONAL ACTION TO PROCEED</p>
+        
+        <div className="flex flex-col sm:flex-row gap-8 w-full md:w-auto">
+          <button 
+            onClick={() => setRecruiterMode(true)}
+            className="px-10 py-5 bg-white text-black font-black uppercase text-xs tracking-widest hover:bg-white/90 transition-all w-full md:w-auto"
+          >
+            RECRUITER_MODE
+          </button>
+          <Link 
+            href="/prathams-os"
+            target="_blank"
+            className="px-10 py-5 border border-white/30 text-white font-black uppercase text-xs tracking-widest hover:border-white transition-all w-full md:w-auto text-center"
+          >
+            DEVELOPER_OS
+          </Link>
+        </div>
       </div>
 
-      {/* Persistent Recruiter Mode Button */}
+      {/* Persistent Bottom Right Recruiter Mode Button */}
       <div className="fixed bottom-10 right-10 z-[9999]">
         <button
           onClick={() => setRecruiterMode(true)}
-          className="pointer-events-auto flex items-center gap-3 px-6 py-4 bg-black/60 backdrop-blur-xl border border-white/20 text-white font-bold uppercase text-[10px] md:text-xs tracking-[0.2em] hover:bg-[#fbbf24] hover:text-black hover:border-[#fbbf24] transition-all duration-300 rounded shadow-[0_0_20px_rgba(0,0,0,0.8),inset_0_0_10px_rgba(255,255,255,0.05)] hover:shadow-[0_0_30px_rgba(251,191,36,0.5)] group"
+          className="pointer-events-auto flex items-center gap-3 px-6 py-4 bg-black/60 backdrop-blur-xl border border-[#fbbf24]/30 text-white font-bold uppercase text-[10px] md:text-xs tracking-[0.2em] hover:bg-[#fbbf24] hover:text-black transition-all duration-300 rounded shadow-[0_0_20px_rgba(0,0,0,0.8)] hover:shadow-[0_0_30px_rgba(251,191,36,0.5)] group"
         >
           <Terminal size={16} className="group-hover:animate-pulse" />
           ENTER RECRUITER MODE
         </button>
       </div>
+
     </div>
   );
 });

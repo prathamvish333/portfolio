@@ -10,7 +10,7 @@ body {
 
 @layer base {
   body {
-    @apply bg-[#0b1120] text-[#e5e7eb] antialiased selection:bg-teal-500/30 font-sans;
+    @apply bg-black text-white antialiased selection:bg-white/20 font-sans;
     overflow-x: hidden;
   }
 }
@@ -110,11 +110,11 @@ body {
 
   /* === SURFACE & DEPTH === */
   .surface-card {
-    @apply rounded-[2.5rem] border border-white/[0.08] bg-[#1e293b] shadow-[0_40px_120px_rgba(0,0,0,0.7)] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)];
+    @apply border border-white/5 bg-white/[0.02] backdrop-blur-sm transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)];
   }
 
   .surface-card:hover {
-    @apply border-teal-500/40 shadow-[0_60px_150px_rgba(0,0,0,0.9)] scale-[1.01] -translate-y-2;
+    @apply border-white/10 bg-white/[0.04];
   }
 
   .glass-blur {
@@ -146,7 +146,19 @@ body {
 }
 
 .font-heading {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-sans), sans-serif;
+}
+
+.font-mono {
+  font-family: var(--font-mono), monospace;
+}
+
+.cinematic-line {
+  @apply h-[1px] w-full bg-gradient-to-r from-transparent via-white/10 to-transparent;
+}
+
+.system-label {
+  @apply font-mono text-[9px] uppercase tracking-[0.3em] text-gray-500;
 }
 
 /* Atmospheric Vignette */

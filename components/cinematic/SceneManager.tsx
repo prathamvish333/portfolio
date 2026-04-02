@@ -23,7 +23,7 @@ export default function SceneManager() {
   // Single Source of Truth
   const targetProgress = useRef(0);
   const currentProgress = useRef(0);
-  const rafId = useRef<number>();
+  const rafId = useRef<number | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -39,26 +39,52 @@ export default function SceneManager() {
       },
     });
 
-    // High performance rAF loop for syncing Engine
+    // High performance rAF loop for syncing Engine with dynamic pacing
     const renderLoop = () => {
-      // Linear interpolation (lerp) for fast but smooth progress
-      let diff = targetProgress.current - currentProgress.current;
+      const p = currentProgress.current;
+      const target = targetProgress.current;
+
+      // 1. Dynamic LERP factor (Varying speed across scenes)
+      let lerpFactor = 0.12; // Base snappy speed
+
+      // Slow zone: Hook / Black Hole (0.0 - 0.18)
+      if (p < 0.18) lerpFactor = 0.06;
+      // Fast Reveal: Identity (0.20 - 0.32)
+      else if (p >= 0.20 && p < 0.35) lerpFactor = 0.18;
+      // Slow/Heavy: Experience (0.35 - 0.50)
+      else if (p >= 0.35 && p < 0.50) lerpFactor = 0.08;
+      // Standard: Capability & Impact (0.50 - 0.70)
+      else if (p >= 0.50 && p < 0.70) lerpFactor = 0.12;
+      // Slow Zone for Projects (0.70 - 0.92)
+      else if (p >= 0.70 && p < 0.92) lerpFactor = 0.08;
+      // Final Landing (0.92 - 1.0)
+      else if (p >= 0.92) lerpFactor = 0.15;
+
+      // 2. Linear interpolation (lerp) with dynamic factor
+      let diff = target - p;
       
-      // Clamp small differences to prevent endless dragging sensation
-      if (Math.abs(diff) < 0.0001) {
-        currentProgress.current = targetProgress.current;
-      } else {
-        // Increased lerp factor (0.15) for faster visual feedback
-        currentProgress.current += diff * 0.15; 
+      // Micro-Pause / "Detent" logic: 
+      // Updated centers for 9-phase flow
+      const sceneCenters = [0.03, 0.11, 0.23, 0.38, 0.54, 0.65, 0.75, 0.86, 0.95];
+      const isNearCenter = sceneCenters.some(c => Math.abs(target - c) < 0.015);
+      if (isNearCenter && Math.abs(diff) < 0.05) {
+        lerpFactor *= 0.5; // Slow down even more when target is in a readable center
       }
 
-      const p = currentProgress.current;
+      // Clamp small differences to prevent endless dragging sensation
+      if (Math.abs(diff) < 0.0001) {
+        currentProgress.current = target;
+      } else {
+        currentProgress.current += diff * lerpFactor; 
+      }
+
+      const finalP = currentProgress.current;
 
       // 1. Sync Canvas (0 to 1 -> 0 to 1259 frames)
-      if (canvasRef.current) canvasRef.current.setFrame(p * 1259);
+      if (canvasRef.current) canvasRef.current.setFrame(finalP * 1259);
 
       // 2. Sync Cinematic Overlay 
-      if (overlayRef.current) overlayRef.current.setProgress(p);
+      if (overlayRef.current) overlayRef.current.setProgress(finalP);
 
       rafId.current = requestAnimationFrame(renderLoop);
     };
