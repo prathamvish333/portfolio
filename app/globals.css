@@ -10,7 +10,7 @@ body {
 
 @layer base {
   body {
-    @apply bg-black text-white antialiased selection:bg-white/20 font-sans;
+    @apply bg-terminal-board text-terminal-text antialiased selection:bg-terminal-teal/20 font-sans;
     overflow-x: hidden;
   }
 }

@@ -274,7 +274,7 @@ export default function LandingPage() {
             {isRecruiterMode && (
               <div className="flex flex-col sm:flex-row gap-4">
                 <button onClick={() => setRecruiterMode(false)} className="px-6 py-4 bg-white text-black hover:bg-white/90 font-heading text-[10px] font-black tracking-widest uppercase transition-all flex items-center justify-center gap-3">
-                  <span>CINEMATIC_RECOVERY</span>
+                  <span>🚀 DIVE_INTO_SPACE</span>
                   <ExternalLink size={14} />
                 </button>
                 <Link href="/prathams-os" target="_blank" className="px-6 py-4 border border-white/10 hover:border-white text-white rounded font-heading text-[10px] font-black tracking-widest uppercase transition-all flex items-center justify-center gap-3">
