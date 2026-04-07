@@ -142,31 +142,18 @@ const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref
     const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) return;
 
-    const rounded = Math.round(frameFloat * 100) / 100;
-    if (rounded === lastDrawnFrame.current) return;
-    lastDrawnFrame.current = rounded;
-
+    // Fast-path: Only redraw when the integer frame changes
     const idxA = Math.floor(frameFloat);
-    const idxB = Math.min(idxA + 1, TOTAL_FRAMES - 1);
-    const blend = frameFloat - idxA;
+    if (idxA === lastDrawnFrame.current) return;
+    lastDrawnFrame.current = idxA;
 
-    // Disabled active preloading during scroll loop! 
-    // This removes heavy DOM/network operations from the rAF critical path.
-    // preloadAround(idxA); 
+    ctx.imageSmoothingEnabled = false; // Disable for performance
 
     const imgA = imagesRef.current.get(idxA);
-    const imgB = imagesRef.current.get(idxB);
     const cw = canvas.width;
     const ch = canvas.height;
 
-    if (isReady(imgA) && isReady(imgB) && blend > 0.01) {
-      ctx.globalAlpha = 1;
-      drawImageCover(ctx, imgA, cw, ch);
-      ctx.globalAlpha = blend;
-      drawImageCover(ctx, imgB, cw, ch);
-      ctx.globalAlpha = 1;
-    } else if (isReady(imgA)) {
-      ctx.globalAlpha = 1;
+    if (isReady(imgA)) {
       drawImageCover(ctx, imgA, cw, ch);
     } else {
       // Frame not ready — fallback load
@@ -174,7 +161,6 @@ const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref
       fallback.onload = () => {
         imagesRef.current.set(idxA, fallback);
         if (Math.floor(lastDrawnFrame.current) === idxA) {
-          ctx.globalAlpha = 1;
           drawImageCover(ctx, fallback, cw, ch);
         }
       };

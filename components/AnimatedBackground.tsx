@@ -57,7 +57,7 @@ export default function AnimatedBackground({ isRecruiterMode = false }: { isRecr
                 {/* Master Vignette for Depth */}
                 <div className="absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)] pointer-events-none" />
                 
-                {/* Moving Atmospheric Blobs */}
+                {/* Moving Atmospheric Blobs - GREATLY REDUCED BLUR AND OPACITY for performance */}
                 <motion.div
                     animate={{
                         x: [0, 100, -50, 0],
@@ -65,7 +65,7 @@ export default function AnimatedBackground({ isRecruiterMode = false }: { isRecr
                         scale: [1, 1.2, 0.9, 1],
                     }}
                     transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                    className="absolute top-1/4 -left-20 h-[500px] w-[500px] rounded-full bg-teal-600/10 blur-[120px]"
+                    className="absolute top-1/4 -left-20 h-[500px] w-[500px] rounded-full bg-teal-600/[0.03] blur-[60px] will-change-transform"
                 />
                 
                 <motion.div
@@ -75,7 +75,7 @@ export default function AnimatedBackground({ isRecruiterMode = false }: { isRecr
                         scale: [0.8, 1, 0.85, 0.8],
                     }}
                     transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                    className="absolute bottom-1/4 -right-20 h-[600px] w-[600px] rounded-full bg-teal-700/10 blur-[150px]"
+                    className="absolute bottom-1/4 -right-20 h-[600px] w-[600px] rounded-full bg-teal-700/[0.03] blur-[80px] will-change-transform"
                 />
 
                 <motion.div
@@ -126,7 +126,7 @@ export default function AnimatedBackground({ isRecruiterMode = false }: { isRecr
                         y: [0, -30, 40, 0],
                     }}
                     transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    className="absolute top-1/4 -left-20 h-[500px] w-[500px] rounded-full bg-teal-600/[0.05] blur-[120px]"
+                    className="absolute top-1/4 -left-20 h-[500px] w-[500px] rounded-full bg-teal-600/[0.02] blur-[60px] will-change-transform"
                 />
                 
                 <motion.div
@@ -135,7 +135,7 @@ export default function AnimatedBackground({ isRecruiterMode = false }: { isRecr
                         y: [0, 50, -10, 0],
                     }}
                     transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                    className="absolute bottom-1/4 -right-20 h-[600px] w-[600px] rounded-full bg-teal-700/[0.05] blur-[150px]"
+                    className="absolute bottom-1/4 -right-20 h-[600px] w-[600px] rounded-full bg-teal-700/[0.02] blur-[80px] will-change-transform"
                 />
             </div>
         );
@@ -153,7 +153,7 @@ export default function AnimatedBackground({ isRecruiterMode = false }: { isRecr
 
             <motion.div
                 style={{ x: moveX, y: moveY }}
-                className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-terminal-green opacity-[0.05] blur-[100px]"
+                className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-terminal-green opacity-[0.02] blur-[60px] will-change-transform"
             />
             
             {!isLandingPage && (
