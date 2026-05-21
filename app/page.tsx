@@ -175,10 +175,10 @@ function InfraLayer({ layer, index }: { layer: typeof infraLayers[0]; index: num
    SKILLS SECTION
    ───────────────────────────────────────────── */
 const skillCategories = [
-  { title: 'Languages', icon: '⟨/⟩', skills: ['Python', 'Shell', 'TypeScript'] },
-  { title: 'Backend', icon: '⚡', skills: ['FastAPI', 'REST APIs', 'SQLAlchemy', 'JWT Auth'] },
-  { title: 'DevOps', icon: '☸', skills: ['Docker', 'Kubernetes', 'Terraform', 'CI/CD', 'Jenkins'] },
-  { title: 'Tools', icon: '⚙', skills: ['Git', 'Linux', 'PostgreSQL', 'Prometheus', 'Grafana'] },
+  { title: 'Languages & Backend', icon: '⟨/⟩', skills: ['Python', 'FastAPI', 'Shell Scripting'] },
+  { title: 'DevOps', icon: '☸', skills: ['Docker', 'Kubernetes', 'Jenkins', 'ArgoCD'] },
+  { title: 'Cloud & Infra', icon: '☁', skills: ['Terraform', 'AWS', 'GCP', 'SaltStack'] },
+  { title: 'Observability & Tools', icon: '⚙', skills: ['Prometheus', 'Grafana', 'Linux', 'Git', 'GitHub', 'Azure Repos'] },
 ];
 
 /* ─────────────────────────────────────────────
