@@ -5,8 +5,8 @@ import { getFrameUrl } from '../../utils/frame-loader';
 
 const TOTAL_FRAMES = 1260;
 const INITIAL_PRELOAD = 400;   // First batch loaded before hiding loader
-const PRELOAD_AHEAD = 200;     // Frames to preload ahead of scroll position
-const PRELOAD_BEHIND = 50;     // Frames to keep behind scroll position
+const PRELOAD_AHEAD = 50;      // Frames to preload ahead of scroll position
+const PRELOAD_BEHIND = 20;     // Frames to keep behind scroll position
 
 export interface CanvasPlayerHandle {
   setFrame: (frame: number) => void;
@@ -158,16 +158,14 @@ const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref
     if (isReady(imgA)) {
       drawImageCover(ctx, imgA, cw, ch);
     } else {
-      // Frame not ready — fallback load
-      const fallback = new Image();
-      fallback.onload = () => {
-        imagesRef.current.set(idxA, fallback);
-        if (Math.floor(lastDrawnFrame.current) === idxA) {
-          drawImageCover(ctx, fallback, cw, ch);
-        }
-      };
-      fallback.src = getFrameUrl(idxA);
-      imagesRef.current.set(idxA, fallback);
+      // Re-use the image instance created by preloadAround instead of a new duplicate request!
+      if (imgA) {
+        imgA.onload = () => {
+          if (Math.floor(lastDrawnFrame.current) === idxA) {
+            drawImageCover(ctx, imgA, cw, ch);
+          }
+        };
+      }
     }
   }, [drawImageCover]);
 
@@ -186,8 +184,11 @@ const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref
       />
       {isLoading && (
         <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black">
-          <div className="text-white/60 text-sm font-mono tracking-widest uppercase mb-4">
-            Initializing Sequence
+          <div className="text-white/60 text-sm font-mono tracking-widest uppercase mb-4 text-center">
+            Initializing Sequence<br/>
+            <span className="text-[10px] text-white/40 normal-case tracking-normal mt-2 block">
+              Please wait... it may freeze briefly while caching high-res frames for the first time.
+            </span>
           </div>
           <div className="w-64 h-1 bg-white/10 rounded-full overflow-hidden">
             <div
