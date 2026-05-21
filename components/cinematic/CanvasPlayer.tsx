@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useImperativeHandle, forwardRef, useCallback,
 import { getFrameUrl } from '../../utils/frame-loader';
 
 const TOTAL_FRAMES = 1260;
-const INITIAL_PRELOAD = 400;   // First batch loaded before hiding loader
+const INITIAL_PRELOAD = 120;   // First batch loaded before hiding loader
 const PRELOAD_AHEAD = 50;      // Frames to preload ahead of scroll position
 const PRELOAD_BEHIND = 20;     // Frames to keep behind scroll position
 
