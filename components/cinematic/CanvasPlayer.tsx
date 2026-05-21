@@ -4,9 +4,9 @@ import React, { useEffect, useRef, useImperativeHandle, forwardRef, useCallback,
 import { getFrameUrl } from '../../utils/frame-loader';
 
 const TOTAL_FRAMES = 1260;
-const INITIAL_PRELOAD = 120;   // First batch loaded before hiding loader
-const PRELOAD_AHEAD = 100;     // Frames to preload ahead of scroll position
-const PRELOAD_BEHIND = 20;     // Frames to keep behind scroll position
+const INITIAL_PRELOAD = 400;   // First batch loaded before hiding loader
+const PRELOAD_AHEAD = 200;     // Frames to preload ahead of scroll position
+const PRELOAD_BEHIND = 50;     // Frames to keep behind scroll position
 
 export interface CanvasPlayerHandle {
   setFrame: (frame: number) => void;
@@ -146,6 +146,8 @@ const CanvasPlayer = forwardRef<CanvasPlayerHandle>(function CanvasPlayer(_, ref
     const idxA = Math.floor(frameFloat);
     if (idxA === lastDrawnFrame.current) return;
     lastDrawnFrame.current = idxA;
+
+    preloadAround(idxA);
 
     ctx.imageSmoothingEnabled = false; // Disable for performance
 
