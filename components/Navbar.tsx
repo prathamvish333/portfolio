@@ -9,7 +9,6 @@ const navItems = [
   { name: 'Experience', href: '#experience' },
   { name: 'Projects', href: '#projects' },
   { name: 'Skills', href: '#skills' },
-  { name: 'Developer OS', href: '/prathams-os' },
   { name: 'Engineering', href: '/engineering' },
   { name: 'Notes Demo', href: process.env.NEXT_PUBLIC_NOTES_URL || 'http://localhost:3001' },
 ];
@@ -63,8 +62,8 @@ export default function Navbar() {
       }}
       className="fixed top-0 inset-x-0 z-50 nav-blur px-6 md:px-20 lg:px-32 flex items-center justify-between transition-colors duration-300"
     >
-      <Link href="/" className="font-heading text-lg font-black tracking-tighter text-white uppercase">
-        PRATHAM<span className="text-white/20">.</span>
+      <Link href="/" className="font-heading text-lg font-black tracking-tighter text-[#e5e7eb]">
+        PRATHAM<span className="text-[#0d9488]">.</span>
       </Link>
 
       <div className="hidden md:flex items-center gap-8">
@@ -78,23 +77,24 @@ export default function Navbar() {
           </Link>
         ))}
 
+
         <button
           onClick={() => setRecruiterMode(!isRecruiterMode)}
-          className={`flex items-center gap-2 px-4 py-2 rounded font-heading text-[10px] font-black tracking-widest uppercase transition-all border duration-300
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-heading text-[10px] font-black tracking-widest uppercase transition-all border duration-300
             ${isRecruiterMode 
-              ? 'bg-white border-white text-black' 
-              : 'border-white/10 text-white/40 hover:text-white hover:border-white/20'}`}
+              ? 'bg-[#0d9488] border-[#0d9488] text-white shadow-[0_0_20px_rgba(13,148,136,0.3)]' 
+              : 'border-white/10 text-[#9ca3af] hover:text-[#e5e7eb] hover:border-[#0d9488]/30 shadow-none'}`}
         >
-          <div className={`w-1.5 h-1.5 rounded-full ${isRecruiterMode ? 'bg-black' : 'bg-white/20'} transition-all`} />
-          {isRecruiterMode ? 'RECRUITER_ACTIVE' : 'RECRUITER_MODE'}
+          <div className={`w-2 h-2 rounded-full ${isRecruiterMode ? 'bg-white animate-pulse' : 'bg-gray-600'} transition-all`} />
+          {isRecruiterMode ? 'Recruiter_Active' : 'Recruiter Mode'}
         </button>
 
         <a
           href="/Prathams_Resume.pdf"
           download
-          className="px-4 py-2 border border-white/10 hover:border-white text-white/40 hover:text-white font-heading text-[10px] font-bold tracking-[0.2em] uppercase transition-all"
+          className="px-4 py-2 bg-white/5 hover:bg-[#0d9488]/10 border border-white/10 hover:border-[#0d9488]/30 rounded-lg font-heading text-[10px] font-bold tracking-[0.2em] uppercase transition-all text-[#9ca3af] hover:text-[#e5e7eb]"
         >
-          RESUME
+          Resume
         </a>
       </div>
 
@@ -121,7 +121,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: '100vh' }}
             exit={{ opacity: 0, height: 0 }}
-            className="fixed inset-0 top-[70px] bg-black backdrop-blur-2xl z-40 p-6 flex flex-col gap-8 md:hidden border-t border-white/5 shadow-2xl overflow-y-auto"
+            className="fixed inset-0 top-[70px] bg-[#0b1120]/98 backdrop-blur-2xl z-40 p-6 flex flex-col gap-8 md:hidden border-t border-white/5 shadow-2xl overflow-y-auto"
           >
             <div className="flex flex-col gap-6 pt-4">
               {navItems.map((item, i) => (
@@ -146,6 +146,7 @@ export default function Navbar() {
             </div>
 
             <div className="mt-auto pb-20 border-t border-white/5 pt-8 flex flex-col gap-4">
+
               <motion.button
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

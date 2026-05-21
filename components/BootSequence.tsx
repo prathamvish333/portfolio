@@ -35,9 +35,9 @@ export default function BootSequence({ children, onComplete, mode = 'boot' }: { 
         return [
             "INITIALIZING KERNEL...",
             "MOUNTING VIRTUAL FILESYSTEM...",
-            "LOADING SECURE PROTOCOLS...",
-            "BYPASSING MAINFRAME ENCRYPTION...",
-            "ESTABLISHING SECURE CONNECTION...",
+            "STARTING PIKO REVERSE TUNNEL...",
+            "MOUNTING SALT-SALTY MCP DAEMON...",
+            "ESTABLISHING SECURE JIO CLOUDXP CONNECTION...",
             "ACCESS GRANTED."
         ];
     };

@@ -10,7 +10,7 @@ body {
 
 @layer base {
   body {
-    @apply bg-terminal-board text-terminal-text antialiased selection:bg-terminal-teal/20 font-sans;
+    @apply bg-[#0b1120] text-[#e5e7eb] antialiased selection:bg-teal-500/30 font-sans;
     overflow-x: hidden;
   }
 }
@@ -30,7 +30,7 @@ body {
 
   /* === NAVIGATION === */
   .nav-blur {
-    @apply bg-[#0b1120]/95 border-b border-white/[0.05];
+    @apply backdrop-blur-xl bg-[#0b1120]/80 border-b border-white/[0.05];
   }
 
   .nav-link {
@@ -64,9 +64,9 @@ body {
 
   /* === ARCHITECTURE NODE === */
   .arch-node {
-    @apply relative p-6 md:p-8 rounded-2xl border border-white/5 bg-[#111827];
+    @apply relative p-6 md:p-8 rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-sm;
     @apply transition-all duration-500 cursor-pointer;
-    @apply hover:border-teal-500/30 hover:bg-[#151f30] hover:shadow-[0_0_40px_rgba(13,148,136,0.1)];
+    @apply hover:border-teal-500/30 hover:bg-white/[0.04] hover:shadow-[0_0_40px_rgba(13,148,136,0.1)];
   }
 
   .arch-node.active {
@@ -80,7 +80,7 @@ body {
   /* === SKILL BADGE === */
   .skill-badge {
     @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl;
-    @apply border border-white/5 bg-[#111827];
+    @apply border border-white/5 bg-white/[0.02] backdrop-blur-sm;
     @apply font-heading text-xs md:text-sm font-medium text-[#9ca3af];
     @apply transition-all hover:border-teal-500/30 hover:text-[#e5e7eb] hover:shadow-[0_0_15px_rgba(13,148,136,0.1)];
   }
@@ -110,15 +110,15 @@ body {
 
   /* === SURFACE & DEPTH === */
   .surface-card {
-    @apply border border-white/5 bg-white/[0.02] backdrop-blur-sm transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)];
+    @apply rounded-[2.5rem] border border-white/[0.08] bg-[#1e293b] shadow-[0_40px_120px_rgba(0,0,0,0.7)] backdrop-blur-sm transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)];
   }
 
   .surface-card:hover {
-    @apply border-white/10 bg-white/[0.04];
+    @apply border-teal-500/40 shadow-[0_60px_150px_rgba(0,0,0,0.9)] scale-[1.01] -translate-y-2;
   }
 
   .glass-blur {
-    @apply bg-[#0d1117] border border-white/[0.05];
+    @apply backdrop-blur-md bg-white/[0.01] border border-white/[0.05];
   }
 
   .grid-bg {
@@ -146,19 +146,7 @@ body {
 }
 
 .font-heading {
-  font-family: var(--font-sans), sans-serif;
-}
-
-.font-mono {
-  font-family: var(--font-mono), monospace;
-}
-
-.cinematic-line {
-  @apply h-[1px] w-full bg-gradient-to-r from-transparent via-white/10 to-transparent;
-}
-
-.system-label {
-  @apply font-mono text-[9px] uppercase tracking-[0.3em] text-gray-500;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 /* Atmospheric Vignette */
@@ -194,7 +182,7 @@ body {
 }
 
 .terminal-input {
-  @apply w-full rounded-md border border-terminal-dim bg-[#0b1120] px-4 py-2 font-mono text-sm text-terminal-text focus:border-terminal-teal focus:outline-none focus:ring-1 focus:ring-terminal-teal/50;
+  @apply w-full rounded-md border border-terminal-dim bg-background px-4 py-2 font-mono text-sm text-terminal-text focus:border-terminal-teal focus:outline-none focus:ring-1 focus:ring-terminal-teal/50;
 }
 
 .terminal-btn {

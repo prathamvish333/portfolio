@@ -65,7 +65,7 @@ export default function SceneManager() {
       
       // Micro-Pause / "Detent" logic: 
       // Updated centers for 9-phase flow
-      const sceneCenters = [0.03, 0.11, 0.23, 0.38, 0.54, 0.65, 0.75, 0.86, 0.95];
+      const sceneCenters = [0.03, 0.11, 0.23, 0.38, 0.54, 0.65, 0.78, 0.93];
       const isNearCenter = sceneCenters.some(c => Math.abs(target - c) < 0.015);
       if (isNearCenter && Math.abs(diff) < 0.05) {
         lerpFactor *= 0.5; // Slow down even more when target is in a readable center

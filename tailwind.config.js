@@ -1,45 +1,34 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
+  darkMode: 'class',
+  content: ['./app/**/*.{js,jsx,ts,tsx}', './components/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        'hud-gold': '#fbbf24',
-        'radar-cyan': '#22d3ee',
-        'space-bg': '#05070d',
-        'system-green': '#10b981',
-        'critical-red': '#ef4444',
-        'terminal-green': '#0d9488',
-        'terminal-teal': '#0d9488',
-        'terminal-teal-hover': '#14b8a6',
-        'terminal-teal-glow': '#2dd4bf',
-        'terminal-teal-muted': '#134e4a',
-        'terminal-board': '#0b1120',
-        'terminal-dim': '#111827',
-        'terminal-text': '#e5e7eb',
-        'terminal-muted': '#9ca3af'
-      },
-      fontFamily: {
-        sans: ['var(--font-sans)', 'Inter', 'sans-serif'],
-        mono: ['var(--font-mono)', 'monospace'],
-        space: ['var(--font-space)', 'monospace'],
+        background: '#0b1120',
+        surface: '#111827',
+        'surface-card': '#1e293b',
+        terminal: {
+          green: '#0d9488', // Replaced with Teal Primary
+          teal: '#0d9488',
+          'teal-hover': '#14b8a6',
+          'teal-glow': '#2dd4bf',
+          'teal-muted': '#134e4a',
+          board: '#0b1120',
+          dim: '#111827',
+          text: '#e5e7eb',
+          muted: '#9ca3af'
+        }
       },
       animation: {
-        'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'flicker': 'flicker 0.15s infinite',
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'float': 'float 6s ease-in-out infinite',
       },
       keyframes: {
-        'pulse-glow': {
-          '0%, 100%': { opacity: 1, transform: 'scale(1)' },
-          '50%': { opacity: 0.7, transform: 'scale(1.1)' },
-        },
-        'flicker': {
-          '0%, 100%': { opacity: 1 },
-          '50%': { opacity: 0.8 },
-        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        }
       },
       boxShadow: {
         'terminal-glow': '0 0 15px rgba(13, 148, 136, 0.1)',
@@ -50,3 +39,4 @@ module.exports = {
   },
   plugins: [],
 };
+

@@ -23,7 +23,7 @@ export default function SystemStatus() {
       animate={{ opacity: 1, scale: 1 }}
       className="fixed bottom-8 right-8 z-40 hidden lg:block"
     >
-      <div className="bg-[#1e293b]/95 border border-white/10 rounded-2xl p-4 shadow-2xl overflow-hidden group hover:border-[#0d9488]/30 transition-all">
+      <div className="bg-[#1e293b]/80 backdrop-blur-md border border-white/10 rounded-2xl p-4 shadow-2xl overflow-hidden group hover:border-[#0d9488]/30 transition-all">
         <div className="flex items-center gap-3 mb-3">
           <div className="relative">
             <div className="w-2 h-2 rounded-full bg-teal-500 animate-ping absolute" />

@@ -58,7 +58,13 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
 
   if (isRecursive) return null; // Prevent windows inside windows
 
-  const showTopPanel = pathname !== '/' && pathname !== '/desktop' && pathname !== '/login' && pathname !== '/signup' && pathname !== '/prathams-os' && pathname !== '/engineering' && !isWindowMode;
+  const isCinematic = pathname === '/cinematic';
+  const showTopPanel = pathname !== '/' && pathname !== '/desktop' && pathname !== '/login' && pathname !== '/signup' && pathname !== '/prathams-os' && pathname !== '/engineering' && !isWindowMode && !isCinematic;
+
+  // Cinematic route: render children with zero OS chrome
+  if (isCinematic) {
+    return <>{children}</>;
+  }
 
   return (
     <>
@@ -90,6 +96,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
               {/* Header Actions */}
               <div className="flex items-center gap-4">
                 <VolumeToggle />
+
                 <div className="font-mono text-xs text-terminal-green">
                   [SECURE_CONNECTION_ESTABLISHED]
                 </div>

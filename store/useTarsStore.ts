@@ -1,41 +1,12 @@
-import { create } from 'zustand';
+'use client';
 
-type PerformanceTier = 'high' | 'low' | 'unknown';
+import { useOS } from '../context/OSContext';
 
-interface TarsState {
-  isRecruiterMode: boolean; // True = Terminal/Text (Recruiter), False = Cinematic/Canvas
-  performanceTier: PerformanceTier;
-  isLoaded: boolean;
-  syncProgress: number;
-  setRecruiterMode: (mode: boolean) => void;
-  toggleRecruiterMode: () => void;
-  setPerformanceTier: (tier: PerformanceTier) => void;
-  setLoaded: (loaded: boolean) => void;
-  setSyncProgress: (progress: number) => void;
+/**
+ * Compatibility shim — the cinematic overlay imports from this path.
+ * Under the hood it delegates to the existing OSContext provider.
+ */
+export function useTarsStore() {
+  const { isRecruiterMode, setRecruiterMode } = useOS();
+  return { isRecruiterMode, setRecruiterMode };
 }
-
-export const useTarsStore = create<TarsState>((set) => ({
-  isRecruiterMode: false,
-  performanceTier: 'unknown',
-  isLoaded: false,
-  syncProgress: 0,
-  
-  setRecruiterMode: (mode) => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('recruiter_active', String(mode));
-    }
-    set({ isRecruiterMode: mode });
-  },
-  
-  toggleRecruiterMode: () => set((state) => {
-    const next = !state.isRecruiterMode;
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('recruiter_active', String(next));
-    }
-    return { isRecruiterMode: next };
-  }),
-  
-  setPerformanceTier: (tier) => set({ performanceTier: tier }),
-  setLoaded: (loaded) => set({ isLoaded: loaded }),
-  setSyncProgress: (progress) => set({ syncProgress: progress }),
-}));

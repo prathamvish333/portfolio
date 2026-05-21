@@ -32,8 +32,7 @@ const CinematicOverlay = forwardRef<CinematicOverlayHandle>(function CinematicOv
   const s4Ref = useRef<HTMLDivElement>(null); // Capability
   const s5Ref = useRef<HTMLDivElement>(null); // Impact Statement 2
   const s6Ref = useRef<HTMLDivElement>(null); // Project 1
-  const s7Ref = useRef<HTMLDivElement>(null); // Project 2
-  const s8Ref = useRef<HTMLDivElement>(null); // CTA
+  const s7Ref = useRef<HTMLDivElement>(null); // CTA
 
   useImperativeHandle(ref, () => ({
     setProgress: (p: number) => {
@@ -84,28 +83,20 @@ const CinematicOverlay = forwardRef<CinematicOverlayHandle>(function CinematicOv
         s5Ref.current.style.transform = `scale(${mapP(p, 0.62, 0.70, 0.95, 1)})`;
       }
 
-      // PROJECT 1: NOTES-STUDIO (0.71 -> 0.80) Center: 0.75
+      // PROJECT 1: NOTES-STUDIO (0.71 -> 0.85) Center: 0.78
       if (s6Ref.current) {
-        const op = getOpacity(p, 0.71, 0.73, 0.78, 0.80);
+        const op = getOpacity(p, 0.71, 0.73, 0.83, 0.85);
         s6Ref.current.style.opacity = op.toString();
         s6Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
-        s6Ref.current.style.transform = `scale(${mapP(p, 0.71, 0.80, 0.95, 1)})`;
+        s6Ref.current.style.transform = `scale(${mapP(p, 0.71, 0.85, 0.95, 1)})`;
       }
 
-      // PROJECT 2: YASHASVI DUNIYA (0.82 -> 0.92) Center: 0.86
+      // FINAL CTA (0.86 -> 1.0) Center: 0.93
       if (s7Ref.current) {
-        const op = getOpacity(p, 0.82, 0.84, 0.90, 0.92);
+        const op = getOpacity(p, 0.86, 0.89, 1, 1);
         s7Ref.current.style.opacity = op.toString();
         s7Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
-        s7Ref.current.style.transform = `scale(${mapP(p, 0.82, 0.92, 0.95, 1)})`;
-      }
-
-      // FINAL CTA (0.93 -> 1.0) Center: 0.95
-      if (s8Ref.current) {
-        const op = getOpacity(p, 0.93, 0.95, 1, 1);
-        s8Ref.current.style.opacity = op.toString();
-        s8Ref.current.style.pointerEvents = op > 0.1 ? 'auto' : 'none';
-        s8Ref.current.style.transform = `scale(${mapP(p, 0.93, 1, 0.98, 1)})`;
+        s7Ref.current.style.transform = `scale(${mapP(p, 0.86, 1, 0.98, 1)})`;
       }
     },
   }), []);
@@ -149,7 +140,7 @@ const CinematicOverlay = forwardRef<CinematicOverlayHandle>(function CinematicOv
           <p className="system-label">NODE: JIO PLATFORMS // SDE-I</p>
           <div className="cinematic-line w-64" />
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-[10px] font-mono text-gray-400 uppercase tracking-widest">
-            {['PYTHON', 'KUBERNETES', 'CI/CD', 'HYBRID CLOUD'].map(tech => (
+            {['PYTHON', 'KUBERNETES', 'AI MCP ORCHESTRATION', 'HYBRID CLOUD'].map(tech => (
               <span key={tech} className="hover:text-white transition-colors">{tech}</span>
             ))}
           </div>
@@ -211,35 +202,9 @@ const CinematicOverlay = forwardRef<CinematicOverlayHandle>(function CinematicOv
         </div>
       </div>
 
-      {/* SCENE 7: PROJECT 2 (YASHASVI DUNIYA) */}
-      <div ref={s7Ref} className="absolute z-[9001] w-full max-w-6xl px-4 md:px-10 flex flex-col items-center pointer-events-auto text-center" style={{ opacity: 0 }}>
-        <div className="space-y-4 md:space-y-6 mb-8 md:mb-12">
-          <p className="system-label text-[8px] md:text-[10px]">ARCHIVE_02 // HIGH-TRAFFIC PORTAL</p>
-          <div className="cinematic-line w-16 md:w-32 mx-auto" />
-          <h3 className="text-4xl sm:text-7xl md:text-9xl font-black uppercase tracking-tight text-white font-heading">YASHASVI DUNIYA</h3>
-          <p className="text-sm md:text-lg text-gray-400 font-light max-w-3xl leading-relaxed mx-auto px-2">
-            Production news platform serving critical traffic loads with <span className="text-white">Edge Caching</span> and <span className="text-white">Redis</span> optimization.
-          </p>
-        </div>
 
-        <div className="flex flex-wrap justify-center gap-3 mb-16">
-          {['REDIS_OPTIMIZATION', 'EDGE_CACHING', 'CMS_SCALING', 'NEWS_ALGO'].map(tech => (
-            <span key={tech} className="px-3 py-1 border border-white/10 text-[9px] font-mono text-white/40 tracking-widest bg-white/[0.02]">{tech}</span>
-          ))}
-        </div>
-        
-        <div className="flex gap-8">
-          <Link href="https://yashasviduniya.com" target="_blank" className="px-10 py-4 bg-white text-black font-black uppercase text-[10px] tracking-widest hover:bg-white/90 transition-all">
-            LIVE_DEMO
-          </Link>
-          <button disabled className="px-10 py-4 border border-white/20 text-white/30 font-black uppercase text-[10px] tracking-widest cursor-not-allowed">
-            PRIVATE_ARC
-          </button>
-        </div>
-      </div>
-
-      {/* SCENE 8: FINAL CTA */}
-      <div ref={s8Ref} className="absolute z-[9001] w-full max-w-5xl px-10 pointer-events-auto flex flex-col items-center" style={{ opacity: 0 }}>
+      {/* SCENE 7: FINAL CTA */}
+      <div ref={s7Ref} className="absolute z-[9001] w-full max-w-5xl px-10 pointer-events-auto flex flex-col items-center" style={{ opacity: 0 }}>
         <h4 className="text-5xl md:text-7xl font-black uppercase text-white tracking-[0.1em] mb-4 font-heading">SYSTEM READY</h4>
         <p className="system-label mb-16">SELECT OPERATIONAL ACTION TO PROCEED</p>
         
