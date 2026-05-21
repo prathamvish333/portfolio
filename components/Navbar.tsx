@@ -10,7 +10,7 @@ const navItems = [
   { name: 'Projects', href: '#projects' },
   { name: 'Skills', href: '#skills' },
   { name: 'Engineering', href: '/engineering' },
-  { name: 'Notes Demo', href: process.env.NEXT_PUBLIC_NOTES_URL || 'http://localhost:3001' },
+  { name: 'Notes Demo', href: process.env.NEXT_PUBLIC_NOTES_URL || '/notes' },
 ];
 
 export default function Navbar() {

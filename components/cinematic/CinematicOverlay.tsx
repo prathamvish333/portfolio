@@ -193,7 +193,7 @@ const CinematicOverlay = forwardRef<CinematicOverlayHandle>(function CinematicOv
         </div>
 
         <div className="flex gap-8">
-          <Link href={process.env.NEXT_PUBLIC_NOTES_URL || "http://localhost:3001"} target="_blank" className="px-10 py-4 bg-white text-black font-black uppercase text-[10px] tracking-widest hover:bg-white/90 transition-all">
+          <Link href={process.env.NEXT_PUBLIC_NOTES_URL || "/notes"} target="_blank" className="px-10 py-4 bg-white text-black font-black uppercase text-[10px] tracking-widest hover:bg-white/90 transition-all">
             LIVE_DEMO
           </Link>
           <Link href="https://github.com/prathamvish333/Notes-Studio" target="_blank" className="px-10 py-4 border border-white/20 text-white font-black uppercase text-[10px] tracking-widest hover:border-white transition-all">
