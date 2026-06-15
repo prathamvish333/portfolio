@@ -436,6 +436,10 @@ export default function LandingPage() {
                 </div>
 
                 <div className="flex flex-wrap gap-4 pt-4">
+                  <a href={(process.env.NEXT_PUBLIC_NOTES_URL || '/notes') + '/devops'} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-teal-500/20 hover:bg-teal-500/40 border border-teal-500/50 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(20,184,166,0.4)] hover:shadow-[0_0_30px_rgba(20,184,166,0.6)] flex items-center gap-2 text-teal-300">
+                    <span>🤖 AI Agent DevOps</span>
+                    <ExternalLink size={14} />
+                  </a>
                   <a href={process.env.NEXT_PUBLIC_NOTES_URL || '/notes'} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-[#0d9488] hover:bg-[#14b8a6] rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all shadow-lg shadow-teal-500/20 flex items-center gap-2">
                     <span>Try Live Demo</span>
                     <ExternalLink size={14} />
@@ -448,6 +452,68 @@ export default function LandingPage() {
               <div className="space-y-6">
                  <h4 className="font-heading text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] text-center mb-4">Architecture Specification</h4>
                  <ArchitectureDiagram isRecruiterMode={isRecruiterMode} />
+              </div>
+            </div>
+          </div>
+
+          {/* Project 2: DevOps AI Center */}
+          <div className="surface-card p-8 md:p-12 mb-20 lg:p-16 relative overflow-hidden group">
+            {/* Background glow for AI effect */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/5 blur-3xl rounded-full group-hover:bg-purple-500/10 transition-colors pointer-events-none" />
+            
+            <div className="grid lg:grid-cols-2 gap-16 items-start relative z-10">
+              <div className="space-y-10">
+                <div>
+                  <div className="flex items-center gap-4 mb-4">
+                    <span className="px-3 py-1 rounded-md bg-purple-500/10 border border-purple-500/20 font-mono text-[10px] text-purple-400 font-bold uppercase tracking-widest flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
+                      MCP Agent
+                    </span>
+                    <span className="px-3 py-1 rounded-md bg-teal-500/10 border border-teal-500/20 font-mono text-[10px] text-teal-400 font-bold uppercase tracking-widest">DevOps</span>
+                  </div>
+                  <h3 className="font-heading text-4xl md:text-6xl font-black text-[#e5e7eb] leading-tight mb-6">DevOps AI Center<span className="text-purple-500">.</span></h3>
+                  
+                  <div className="space-y-8">
+                    <div>
+                      <h4 className="font-heading text-[10px] font-black text-purple-500 uppercase tracking-[0.3em] mb-2">The Mission</h4>
+                      <p className="text-[#9ca3af] leading-relaxed text-sm md:text-base">
+                        Engineers shouldn&apos;t spend hours querying metrics, reading raw Kubernetes logs, or manually triaging Jenkins pipelines. I built a unified conversational AI agent to handle these DevOps operations securely inside the cluster.
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-heading text-[10px] font-black text-purple-500 uppercase tracking-[0.3em] mb-2">Technical Execution</h4>
+                      <p className="text-[#9ca3af] leading-relaxed text-sm md:text-base">
+                        Powered by Google Gemini and the Model Context Protocol (MCP). The agent has granular, RBAC-secured tools to interface directly with ArgoCD, Jenkins, Kubernetes Secrets, and Trivy Vulnerability Scanners. It runs as a FastAPI microservice communicating via Server-Sent Events (SSE).
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-4 pt-4">
+                  <a href={(process.env.NEXT_PUBLIC_NOTES_URL || '/notes') + '/devops'} target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-purple-500/20 hover:bg-purple-500/40 border border-purple-500/50 rounded-xl font-heading text-xs font-black tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] flex items-center gap-2 text-purple-300">
+                    <span>Chat with AI Agent</span>
+                  </a>
+                </div>
+              </div>
+
+              <div className="space-y-6 lg:mt-12 bg-[#0b1120]/80 rounded-2xl p-6 md:p-8 border border-white/5 backdrop-blur-xl">
+                 <h4 className="font-heading text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] mb-6">MCP Tool Capabilities</h4>
+                 <ul className="space-y-4">
+                   {[
+                     { icon: '☸', name: 'Kubernetes Cluster', desc: 'Inspects pods, deployments, and logs directly.' },
+                     { icon: '🐙', name: 'ArgoCD Sync', desc: 'Monitors application sync status and health.' },
+                     { icon: '🏗️', name: 'Jenkins CI/CD', desc: 'Triggers builds and analyzes pipeline failures.' },
+                     { icon: '🛡️', name: 'Trivy Security', desc: 'Runs vulnerability scans on Docker images.' }
+                   ].map(tool => (
+                     <li key={tool.name} className="flex gap-4 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                       <span className="text-xl">{tool.icon}</span>
+                       <div>
+                         <p className="text-[#e5e7eb] font-bold text-sm">{tool.name}</p>
+                         <p className="text-gray-400 text-xs mt-1">{tool.desc}</p>
+                       </div>
+                     </li>
+                   ))}
+                 </ul>
               </div>
             </div>
           </div>
